@@ -4,11 +4,13 @@
 
 This repository contains sample process of API Testing on variety of endpoints using RESTful API
 
-### Tools 
-
+---
+## Tools Used
+This is the tool that I used to test API Endpoints 
 - Postman
-
-### HTTP Status Codes
+---
+## HTTP Response Status Codes
+This are the common response status codes output when conducting API Testing
 
 | Status Code | Status Text | Description |
 | :---: | :--- | :--- |
