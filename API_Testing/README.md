@@ -14,7 +14,8 @@ This repository contains sample process of API Testing on variety of endpoints u
 | :---: | :--- | :--- |
 | `200` | OK | Request is successfully submitted |
 | `201` | Created | Resource successfully created |
-| `400` | Bad Request | Missing required parameters |
+| `400` | Bad Request | Missing required parameters or malformed payload |
+| `401` | Unauthorized | Authentication required or invalid/expired token |
 | `404` | Not Found | Requested endpoint or resource does not exist |
 
 
