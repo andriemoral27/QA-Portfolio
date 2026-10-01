@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains sample process of API Testing on variety of endpoints using RESTful API
+This repository contains sample process of API Testing on variety of endpoints using RESTful API. This includes tools, methods and HTTP response outputs
 
 ---
 ## Tools Used
