@@ -267,37 +267,4 @@ This document contains API requests for a Notes application with authentication.
 
 ---
 
-## Common Status Codes
 
-| Status Code | Description |
-|-------------|-------------|
-| 200 OK | Request succeeded (GET, PATCH) |
-| 201 Created | Resource successfully created (POST) |
-| 204 No Content | Successful deletion (DELETE) |
-| 400 Bad Request | Invalid request data or format |
-| 401 Unauthorized | Missing or invalid authentication token |
-| 403 Forbidden | User does not have permission to access resource |
-| 404 Not Found | Resource not found |
-| 409 Conflict | Resource already exists (e.g., duplicate email) |
-| 500 Internal Server Error | Server error occurred |
-
-## Authentication
-
-All note-related endpoints require authentication using a JWT token in the Authorization header:
-
-```
-Authorization: Bearer <your_jwt_token>
-```
-
-The token is obtained from the Login endpoint and typically expires after a set time period.
-
-## Testing in Postman
-
-1. Import the Postman collection: `Act-2 Notes.postman_collection.json`
-2. Set the `base_url` variable in Postman environment or collection variables
-3. First, register a new user using the Register endpoint
-4. Login to obtain the JWT token
-5. Copy the token and set it in the Authorization header for note endpoints
-6. Run requests in order: Register → Login → Create Note → Get All Notes → Get Single Note → Edit Note → Delete Note
-7. Verify response status codes match expected values
-8. Test authentication by sending requests without the token (should return 401)
