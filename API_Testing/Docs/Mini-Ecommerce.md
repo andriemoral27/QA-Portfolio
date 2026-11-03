@@ -1,4 +1,4 @@
-# Act-9 Mini-Ecommerce API Documentation
+# Mini-Ecommerce API Documentation
 
 ## Overview
 This document contains API requests for a Mini-Ecommerce application. These requests are designed to manage products, shopping cart, and orders in an e-commerce system. Each resource supports full CRUD operations (Create, Read, Update, Delete). Each example includes the HTTP method, URL, headers, request body, expected HTTP status codes, and notes for testing in Postman.
