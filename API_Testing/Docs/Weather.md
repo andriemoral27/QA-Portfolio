@@ -1,4 +1,4 @@
-# Act-4 Weather API Documentation
+# Weather API Documentation
  
 ## Overview
 This document contains API requests for a Weather application. These requests are designed to retrieve weather information for different cities using query parameters. Each example includes the HTTP method, URL, headers, expected HTTP status codes, and notes for testing in Postman.
