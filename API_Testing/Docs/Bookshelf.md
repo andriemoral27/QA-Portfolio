@@ -1,4 +1,4 @@
-# Act-3 Bookshelf API Documentation
+# Bookshelf API Documentation
 
 ## Overview
 This document contains API requests for a Bookshelf application. These requests are designed to manage book-related resources including categories, authors, and books. Each resource supports full CRUD operations (Create, Read, Update, Delete). Each example includes the HTTP method, URL, headers, request body, expected HTTP status codes, and notes for testing in Postman.
