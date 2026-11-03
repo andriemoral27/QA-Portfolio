@@ -1,4 +1,4 @@
-# Act-2 Notes API Documentation
+# Notes API Documentation
  
 ## Overview
 This document contains API requests for a Notes application with authentication. These requests are designed to manage user accounts and personal notes including registration, login, creating, retrieving, updating, and deleting notes. Each example includes the HTTP method, URL, headers, request body, expected HTTP status codes, and notes for testing in Postman.
