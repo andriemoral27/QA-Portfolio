@@ -1,4 +1,4 @@
-# 📄 Blog Platform API Testing
+# 📄 Blog Platform API 
 
 ## Table of Contents
 1. [Register](#1-register)
