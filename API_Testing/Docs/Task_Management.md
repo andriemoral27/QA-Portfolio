@@ -1,162 +1,160 @@
-# Task Management API Documentation
-
-## Overview
-This document contains API requests for a Task Management application. These requests are designed to manage users, projects, and tasks in a project management system. Each resource supports full CRUD operations (Create, Read, Update, Delete). Each example includes the HTTP method, URL, headers, request body, expected HTTP status codes, and notes for testing in Postman.
+# 📄 Task Management API Testing
 
 ## Table of Contents
-1. [Users](#users)
-   - 1.1 Create User
-   - 1.2 Get All Users
-   - 1.3 Get One User
-   - 1.4 Edit User
-   - 1.5 Delete User
-2. [Projects](#projects)
-   - 2.1 Create Project
-   - 2.2 Get All Projects
-   - 2.3 Get One Project
-   - 2.4 Edit Project
-   - 2.5 Delete Project
-3. [Tasks](#tasks)
-   - 3.1 Create Task
-   - 3.2 Get All Tasks of User
-   - 3.3 Get All Tasks
-   - 3.4 Get All Tasks by Project
-   - 3.5 Update Task
-   - 3.6 Delete Task
+1. [Create User](#1-create-user)
+2. [Get All Users](#2-get-all-users)
+3. [Get User by ID](#3-get-user-by-id)
+4. [Edit User](#4-edit-user)
+5. [Delete User](#5-delete-user)
+6. [Create Project](#6-create-project)
+7. [Get All Projects](#7-get-all-projects)
+8. [Get Project by ID](#8-get-project-by-id)
+9. [Edit Project](#9-edit-project)
+10. [Delete Project](#10-delete-project)
+11. [Create Task](#11-create-task)
+12. [Get All Tasks](#12-get-all-tasks)
+13. [Get Task by ID](#13-get-task-by-id)
+14. [Get Tasks by User](#14-get-tasks-by-user)
+15. [Edit Task](#15-edit-task)
+16. [Delete Task](#16-delete-task)
+
+## Overview
+This document contains API requests for a Task Management application. These requests are designed to manage users, projects, and tasks. The application supports organizing work into projects and assigning tasks to users. Each example includes method, URL, headers, request body, expected HTTP status, and response structure.
 
 ---
 
-## Users
-
-### 1.1 Create User
+## 1. Create User
 
 **Method:** POST  
-**URL:** `{{base_url}}/users`
+**URL:** https://api.example.com/users
 
 **Headers:**
 - Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "name": "Doe",
-  "email": "doe@example.com"
+  "name": "Alice Johnson",
+  "email": "alice@example.com",
+  "role": "developer"
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 201 Created
 
-**HTTP Status:** 201 Created  
-**Body:**
 ```json
 {
-  "id": 3,
-  "name": "Doe",
-  "email": "doe@example.com",
+  "id": 1,
+  "name": "Alice Johnson",
+  "email": "alice@example.com",
+  "role": "developer",
   "createdAt": "2024-11-02T12:00:00.000Z"
 }
 ```
 
 **Notes:**
-- Creates a new user in the task management system
-- Name and email are required fields
-- Email must be unique -> 409 Conflict if email already exists
-- If required fields are missing -> 400 Bad Request
+- Creates a new user account
+- Email must be unique → 409 Conflict if already exists
+- Supported roles: developer, manager, admin
 
 ---
 
-### 1.2 Get All Users
+## 2. Get All Users
 
 **Method:** GET  
-**URL:** `{{base_url}}/users`
+**URL:** https://api.example.com/users
 
 **Headers:**
-- None required
-
-**Request Body:** None
+- Accept: application/json
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 [
   {
-    "id": 3,
-    "name": "Doe",
-    "email": "doe@example.com",
+    "id": 1,
+    "name": "Alice Johnson",
+    "email": "alice@example.com",
+    "role": "developer",
     "createdAt": "2024-11-02T12:00:00.000Z"
   },
   {
-    "id": 4,
-    "name": "Jane Smith",
-    "email": "jane@example.com",
+    "id": 2,
+    "name": "Bob Smith",
+    "email": "bob@example.com",
+    "role": "manager",
     "createdAt": "2024-11-02T12:05:00.000Z"
   }
 ]
 ```
 
 **Notes:**
-- Returns an array of all users
-- If no users exist, returns an empty array []
-- Users may be sorted by creation date
+- Returns all users in the system
+- Supports pagination with `page` and `limit` parameters
+- Can filter by role with `role` query parameter
 
 ---
 
-### 1.3 Get One User
+## 3. Get User by ID
 
 **Method:** GET  
-**URL:** `{{base_url}}/users/{user_id}`
+**URL:** https://api.example.com/users/1
 
 **Headers:**
-- None required
-
-**Request Body:** None
+- Accept: application/json
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 {
-  "id": 3,
-  "name": "Doe",
-  "email": "doe@example.com",
+  "id": 1,
+  "name": "Alice Johnson",
+  "email": "alice@example.com",
+  "role": "developer",
   "createdAt": "2024-11-02T12:00:00.000Z"
 }
 ```
 
-**Notes:**
-- Returns a single user by their ID
-- If user ID does not exist -> 404 Not Found
-- If user ID is invalid format -> 400 Bad Request
+**Error Response if not found:**
+**Expected HTTP Status:** 404 Not Found
+
+```json
+{
+  "error": "User not found"
+}
+```
 
 ---
 
-### 1.4 Edit User
+## 4. Edit User
 
 **Method:** PATCH  
-**URL:** `{{base_url}}/users/{user_id}`
+**URL:** https://api.example.com/users/1
 
 **Headers:**
 - Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "name": "John DoeDoe"
+  "role": "senior developer"
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 {
-  "id": 3,
-  "name": "John DoeDoe",
-  "email": "doe@example.com",
+  "id": 1,
+  "name": "Alice Johnson",
+  "email": "alice@example.com",
+  "role": "senior developer",
   "createdAt": "2024-11-02T12:00:00.000Z",
   "updatedAt": "2024-11-02T12:30:00.000Z"
 }
@@ -164,268 +162,351 @@ This document contains API requests for a Task Management application. These req
 
 **Notes:**
 - Only updates the fields provided in the request body
-- If user ID does not exist -> 404 Not Found
-- If email conflicts with existing user -> 409 Conflict
-- Email typically cannot be changed (implementation dependent)
+- If user ID does not exist → 404 Not Found
 
 ---
 
-### 1.5 Delete User
+## 5. Delete User
 
 **Method:** DELETE  
-**URL:** `{{base_url}}/users/{user_id}`
+**URL:** https://api.example.com/users/1
 
 **Headers:**
-- None required
-
-**Request Body:** None
+- Authorization: Bearer <valid_token>
 
 **Expected Response:**
-
-**HTTP Status:** 204 No Content  
-**Body:** Empty (indicating successful deletion)
+- HTTP Status: 204 No Content
+- Body: Empty (indicating successful deletion)
 
 **Notes:**
-- Deleting a non-existent user should return 404 Not Found
-- If user has associated tasks or projects, may return 400 Bad Request or cascade delete (implementation dependent)
-- Successful deletion returns 204 with no body
+- Cascade delete: associated tasks should be reassigned or deleted
+- If user is assigned to active tasks → 400 Bad Request or 409 Conflict
 
 ---
 
-## Projects
-
-### 2.1 Create Project
+## 6. Create Project
 
 **Method:** POST  
-**URL:** `{{base_url}}/projects`
+**URL:** https://api.example.com/projects
 
 **Headers:**
 - Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
   "name": "Website Redesign",
-  "description": "Redesign the company website"
+  "description": "Redesign the company website with modern UI/UX",
+  "startDate": "2024-11-01",
+  "endDate": "2024-12-31"
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 201 Created
 
-**HTTP Status:** 201 Created  
-**Body:**
 ```json
 {
-  "id": 2,
+  "id": 8,
   "name": "Website Redesign",
-  "description": "Redesign the company website",
+  "description": "Redesign the company website with modern UI/UX",
+  "startDate": "2024-11-01",
+  "endDate": "2024-12-31",
+  "status": "active",
   "createdAt": "2024-11-02T12:00:00.000Z"
 }
 ```
 
 **Notes:**
 - Creates a new project
-- Name is required field
-- Description is optional
-- If name is missing -> 400 Bad Request
+- startDate and endDate should be in ISO 8601 format (YYYY-MM-DD)
+- If name is missing → 400 Bad Request
 
 ---
 
-### 2.2 Get All Projects
+## 7. Get All Projects
 
 **Method:** GET  
-**URL:** `{{base_url}}/projects`
+**URL:** https://api.example.com/projects
 
 **Headers:**
-- Content-Type: application/json (optional)
-
-**Request Body:** None
+- Accept: application/json
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 [
   {
-    "id": 2,
+    "id": 8,
     "name": "Website Redesign",
-    "description": "Redesign the company website",
+    "description": "Redesign the company website with modern UI/UX",
+    "startDate": "2024-11-01",
+    "endDate": "2024-12-31",
+    "status": "active",
     "createdAt": "2024-11-02T12:00:00.000Z"
   },
   {
-    "id": 8,
+    "id": 9,
     "name": "Mobile App Development",
-    "description": "Build a mobile application",
-    "createdAt": "2024-11-02T12:10:00.000Z"
+    "description": "Develop a mobile app for iOS and Android",
+    "startDate": "2024-12-01",
+    "endDate": "2025-03-31",
+    "status": "planned",
+    "createdAt": "2024-11-02T12:05:00.000Z"
   }
 ]
 ```
 
 **Notes:**
-- Returns an array of all projects
-- If no projects exist, returns an empty array []
-- Projects may be sorted by creation date
+- Returns all projects
+- Supports pagination with `page` and `limit` parameters
+- Can filter by status with `status` query parameter
 
 ---
 
-### 2.3 Get One Project
+## 8. Get Project by ID
 
 **Method:** GET  
-**URL:** `{{base_url}}/projects/{project_id}`
+**URL:** https://api.example.com/projects/8
 
 **Headers:**
-- None required
-
-**Request Body:** None
+- Accept: application/json
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 {
-  "id": 2,
+  "id": 8,
   "name": "Website Redesign",
-  "description": "Redesign the company website",
+  "description": "Redesign the company website with modern UI/UX",
+  "startDate": "2024-11-01",
+  "endDate": "2024-12-31",
+  "status": "active",
   "createdAt": "2024-11-02T12:00:00.000Z"
 }
 ```
 
-**Notes:**
-- Returns a single project by its ID
-- If project ID does not exist -> 404 Not Found
+**Error Response if not found:**
+**Expected HTTP Status:** 404 Not Found
+
+```json
+{
+  "error": "Project not found"
+}
+```
 
 ---
 
-### 2.4 Edit Project
+## 9. Edit Project
 
 **Method:** PATCH  
-**URL:** `{{base_url}}/projects/{project_id}`
+**URL:** https://api.example.com/projects/8
 
 **Headers:**
 - Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "name": "Updated Project Name"
+  "status": "completed",
+  "endDate": "2024-11-15"
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 {
   "id": 8,
-  "name": "Updated Project Name",
-  "description": "Build a mobile application",
-  "createdAt": "2024-11-02T12:10:00.000Z",
+  "name": "Website Redesign",
+  "description": "Redesign the company website with modern UI/UX",
+  "startDate": "2024-11-01",
+  "endDate": "2024-11-15",
+  "status": "completed",
+  "createdAt": "2024-11-02T12:00:00.000Z",
   "updatedAt": "2024-11-02T12:30:00.000Z"
 }
 ```
 
 **Notes:**
 - Only updates the fields provided in the request body
-- If project ID does not exist -> 404 Not Found
-- Unchanged fields retain their original values
+- Supported statuses: planned, active, completed, cancelled
 
 ---
 
-### 2.5 Delete Project
+## 10. Delete Project
 
 **Method:** DELETE  
-**URL:** `{{base_url}}/projects/{project_id}`
+**URL:** https://api.example.com/projects/8
 
 **Headers:**
-- None required
-
-**Request Body:** None
+- Authorization: Bearer <valid_token>
 
 **Expected Response:**
-
-**HTTP Status:** 204 No Content  
-**Body:** Empty (indicating successful deletion)
+- HTTP Status: 204 No Content
+- Body: Empty (indicating successful deletion)
 
 **Notes:**
-- Deleting a non-existent project should return 404 Not Found
-- If project has associated tasks, may return 400 Bad Request or cascade delete (implementation dependent)
-- Successful deletion returns 204 with no body
+- Cascade delete: associated tasks should also be deleted
+- If project has active tasks → 400 Bad Request or 409 Conflict
 
 ---
 
-## Tasks
-
-### 3.1 Create Task
+## 11. Create Task
 
 **Method:** POST  
-**URL:** `{{base_url}}/tasks`
+**URL:** https://api.example.com/tasks
 
 **Headers:**
 - Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "title": "Design homepage",
-  "description": "Create a modern homepage design",
-  "deadline": "2024-12-31",
-  "status": "todo",
-  "projectId": 7
+  "title": "Design homepage mockup",
+  "description": "Create wireframes and high-fidelity mockups for the homepage",
+  "projectId": 8,
+  "assignedTo": 1,
+  "priority": "high",
+  "dueDate": "2024-11-10"
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 201 Created
 
-**HTTP Status:** 201 Created  
-**Body:**
 ```json
 {
-  "id": 1,
-  "title": "Design homepage",
-  "description": "Create a modern homepage design",
-  "deadline": "2024-12-31",
-  "status": "todo",
-  "projectId": 7,
+  "id": 15,
+  "title": "Design homepage mockup",
+  "description": "Create wireframes and high-fidelity mockups for the homepage",
+  "projectId": 8,
+  "assignedTo": 1,
+  "priority": "high",
+  "dueDate": "2024-11-10",
+  "status": "pending",
   "createdAt": "2024-11-02T12:00:00.000Z"
 }
 ```
 
 **Notes:**
-- Creates a new task associated with a project
-- Title, status, and projectId are typically required
-- projectId must reference an existing project
-- If projectId does not exist -> 400 Bad Request
-- Status values typically include: todo, in-progress, done
+- Creates a new task
+- projectId must reference an existing project → 400 Bad Request if not found
+- assignedTo must reference an existing user → 400 Bad Request if not found
+- dueDate should be in ISO 8601 format (YYYY-MM-DD)
+- Supported priorities: low, medium, high, urgent
 
 ---
 
-### 3.2 Get All Tasks of User
+## 12. Get All Tasks
 
 **Method:** GET  
-**URL:** `{{base_url}}/users/{user_id}/tasks`
+**URL:** https://api.example.com/tasks
 
 **Headers:**
-- None required
-
-**Request Body:** None
+- Accept: application/json
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 [
   {
-    "id": 1,
-    "title": "Design homepage",
-    "description": "Create a modern homepage design",
-    "deadline": "2024-12-31",
-    "status": "todo",
-    "projectId": 7,
-    "userId": 6,
+    "id": 15,
+    "title": "Design homepage mockup",
+    "description": "Create wireframes and high-fidelity mockups for the homepage",
+    "projectId": 8,
+    "assignedTo": 1,
+    "priority": "high",
+    "dueDate": "2024-11-10",
+    "status": "pending",
+    "createdAt": "2024-11-02T12:00:00.000Z"
+  },
+  {
+    "id": 16,
+    "title": "Implement navigation",
+    "description": "Build the navigation component with responsive design",
+    "projectId": 8,
+    "assignedTo": 2,
+    "priority": "medium",
+    "dueDate": "2024-11-15",
+    "status": "in_progress",
+    "createdAt": "2024-11-02T12:05:00.000Z"
+  }
+]
+```
+
+**Notes:**
+- Returns all tasks
+- Supports pagination with `page` and `limit` parameters
+- Can filter by projectId, assignedTo, status, or priority with query parameters
+
+---
+
+## 13. Get Task by ID
+
+**Method:** GET  
+**URL:** https://api.example.com/tasks/15
+
+**Headers:**
+- Accept: application/json
+
+**Expected Response:**
+**Expected HTTP Status:** 200 OK
+
+```json
+{
+  "id": 15,
+  "title": "Design homepage mockup",
+  "description": "Create wireframes and high-fidelity mockups for the homepage",
+  "projectId": 8,
+  "assignedTo": 1,
+  "priority": "high",
+  "dueDate": "2024-11-10",
+  "status": "pending",
+  "createdAt": "2024-11-02T12:00:00.000Z"
+}
+```
+
+**Error Response if not found:**
+**Expected HTTP Status:** 404 Not Found
+
+```json
+{
+  "error": "Task not found"
+}
+```
+
+---
+
+## 14. Get Tasks by User
+
+**Method:** GET  
+**URL:** https://api.example.com/users/1/tasks
+
+**Headers:**
+- Accept: application/json
+
+**Expected Response:**
+**Expected HTTP Status:** 200 OK
+
+```json
+[
+  {
+    "id": 15,
+    "title": "Design homepage mockup",
+    "description": "Create wireframes and high-fidelity mockups for the homepage",
+    "projectId": 8,
+    "assignedTo": 1,
+    "priority": "high",
+    "dueDate": "2024-11-10",
+    "status": "pending",
     "createdAt": "2024-11-02T12:00:00.000Z"
   }
 ]
@@ -434,117 +515,39 @@ This document contains API requests for a Task Management application. These req
 **Notes:**
 - Returns all tasks assigned to a specific user
 - If user has no tasks, returns an empty array []
-- If user ID does not exist -> 404 Not Found
 
 ---
 
-### 3.3 Get All Tasks
-
-**Method:** GET  
-**URL:** `{{base_url}}/tasks`
-
-**Headers:**
-- None required
-
-**Request Body:** None
-
-**Expected Response:**
-
-**HTTP Status:** 200 OK  
-**Body:**
-```json
-[
-  {
-    "id": 1,
-    "title": "Design homepage",
-    "description": "Create a modern homepage design",
-    "deadline": "2024-12-31",
-    "status": "todo",
-    "projectId": 7,
-    "createdAt": "2024-11-02T12:00:00.000Z"
-  },
-  {
-    "id": 2,
-    "title": "Backend API",
-    "description": "Develop REST API endpoints",
-    "deadline": "2024-12-15",
-    "status": "in-progress",
-    "projectId": 7,
-    "createdAt": "2024-11-02T12:10:00.000Z"
-  }
-]
-```
-
-**Notes:**
-- Returns an array of all tasks across all projects
-- If no tasks exist, returns an empty array []
-- Tasks may be sorted by deadline or creation date
-
----
-
-### 3.4 Get All Tasks by Project
-
-**Method:** GET  
-**URL:** `{{base_url}}/tasks?projectId={project_id}`
-
-**Headers:**
-- None required
-
-**Request Body:** None
-
-**Expected Response:**
-
-**HTTP Status:** 200 OK  
-**Body:**
-```json
-[
-  {
-    "id": 1,
-    "title": "Design homepage",
-    "description": "Create a modern homepage design",
-    "deadline": "2024-12-31",
-    "status": "todo",
-    "projectId": 7,
-    "createdAt": "2024-11-02T12:00:00.000Z"
-  }
-]
-```
-
-**Notes:**
-- Returns all tasks belonging to a specific project
-- Uses query parameter `projectId` to filter tasks
-- If project has no tasks, returns an empty array []
-- If projectId does not exist -> 404 Not Found
-
----
-
-### 3.5 Update Task
+## 15. Edit Task
 
 **Method:** PATCH  
-**URL:** `{{base_url}}/tasks/{task_id}`
+**URL:** https://api.example.com/tasks/15
 
 **Headers:**
 - Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "status": "done"
+  "status": "completed",
+  "assignedTo": 2
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 {
-  "id": 1,
-  "title": "Design homepage",
-  "description": "Create a modern homepage design",
-  "deadline": "2024-12-31",
-  "status": "done",
-  "projectId": 7,
+  "id": 15,
+  "title": "Design homepage mockup",
+  "description": "Create wireframes and high-fidelity mockups for the homepage",
+  "projectId": 8,
+  "assignedTo": 2,
+  "priority": "high",
+  "dueDate": "2024-11-10",
+  "status": "completed",
   "createdAt": "2024-11-02T12:00:00.000Z",
   "updatedAt": "2024-11-02T12:30:00.000Z"
 }
@@ -552,101 +555,22 @@ This document contains API requests for a Task Management application. These req
 
 **Notes:**
 - Only updates the fields provided in the request body
-- If task ID does not exist -> 404 Not Found
-- Common fields to update: status, title, description, deadline
-- Cannot change projectId (implementation dependent)
+- Supported statuses: pending, in_progress, completed, cancelled
+- Cannot assign to non-existent user → 400 Bad Request
 
 ---
 
-### 3.6 Delete Task
+## 16. Delete Task
 
 **Method:** DELETE  
-**URL:** `{{base_url}}/tasks/{task_id}`
+**URL:** https://api.example.com/tasks/15
 
 **Headers:**
-- None required
-
-**Request Body:** None
+- Authorization: Bearer <valid_token>
 
 **Expected Response:**
-
-**HTTP Status:** 204 No Content  
-**Body:** Empty (indicating successful deletion)
+- HTTP Status: 204 No Content
+- Body: Empty (indicating successful deletion)
 
 **Notes:**
-- Deleting a non-existent task should return 404 Not Found
-- Successful deletion returns 204 with no body
-- Task is permanently removed from the database
-- Does not affect the associated project or user records
-
----
-
-## Common Status Codes
-
-| Status Code | Description |
-|-------------|-------------|
-| 200 OK | Request succeeded (GET, PATCH) |
-| 201 Created | Resource successfully created (POST) |
-| 204 No Content | Successful deletion (DELETE) |
-| 400 Bad Request | Invalid request data or format |
-| 404 Not Found | Resource not found |
-| 409 Conflict | Resource already exists (duplicate email) |
-| 500 Internal Server Error | Server error occurred |
-
-## Request/Response Fields
-
-### User Fields
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| id | number | Auto | Unique identifier for the user |
-| name | string | Yes | User's name |
-| email | string | Yes | User's email address (unique) |
-| createdAt | string | Auto | ISO 8601 timestamp of creation |
-| updatedAt | string | Auto | ISO 8601 timestamp of last update |
-
-### Project Fields
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| id | number | Auto | Unique identifier for the project |
-| name | string | Yes | Project name |
-| description | string | No | Project description |
-| createdAt | string | Auto | ISO 8601 timestamp of creation |
-| updatedAt | string | Auto | ISO 8601 timestamp of last update |
-
-### Task Fields
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| id | number | Auto | Unique identifier for the task |
-| title | string | Yes | Task title |
-| description | string | No | Task description |
-| deadline | string | No | Task deadline (ISO 8601 date format) |
-| status | string | Yes | Task status (todo, in-progress, done) |
-| projectId | number | Yes | ID of the associated project |
-| userId | number | No | ID of the assigned user |
-| createdAt | string | Auto | ISO 8601 timestamp of creation |
-| updatedAt | string | Auto | ISO 8601 timestamp of last update |
-
-## Testing in Postman
-
-1. Import the Postman collection: `Task Management.postman_collection.json`
-2. Set the `base_url` variable in Postman environment or collection variables
-3. Create users first (tasks may require user IDs)
-4. Create projects (tasks require project IDs)
-5. Test GET endpoints to retrieve user and project data
-6. Create tasks using the project IDs
-7. Test task retrieval:
-   - Get all tasks
-   - Get tasks by user
-   - Get tasks by project
-8. Test PATCH endpoints to update task status
-9. Test DELETE endpoints to remove data
-10. Verify response status codes match expected values
-11. Test error scenarios:
-    - Create task with non-existent projectId (should return 400)
-    - Get/delete non-existent IDs (should return 404)
-    - Create user with duplicate email (should return 409)
-12. Test status validation (e.g., invalid status values)
-13. Verify relationships between users, projects, and tasks
+- Deleting a task does not affect the associated project or user
