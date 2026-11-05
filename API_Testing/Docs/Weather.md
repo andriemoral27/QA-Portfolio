@@ -1,4 +1,4 @@
-# 📄 Weather API Testing
+# 📄 Weather API
 
 ## Table of Contents
 1. [Get Weather by City](#1-get-weather-by-city)
