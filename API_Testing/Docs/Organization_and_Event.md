@@ -1,4 +1,4 @@
-# 📄 Organization and Event API Testing
+# 📄 Organization and Event API 
 
 ## Table of Contents
 1. [Register User](#1-register-user)
