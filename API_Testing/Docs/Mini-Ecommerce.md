@@ -619,7 +619,7 @@ This document contains API requests for a Mini-Ecommerce application. These requ
 
 ## Testing in Postman
 
-1. Import the Postman collection: `Act-9 Mini-Ecommerce.postman_collection.json`
+1. Import the Postman collection: `Mini-Ecommerce.postman_collection.json`
 2. Set the `base_url` variable in Postman environment or collection variables
 3. Create products first (cart and orders require product IDs)
 4. Test GET endpoints to retrieve product data
