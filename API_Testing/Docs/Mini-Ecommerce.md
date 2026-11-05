@@ -1,4 +1,4 @@
-# 📄 Mini-Ecommerce API Testing
+# 📄 Mini-Ecommerce API 
 
 ## Table of Contents
 1. [Create Product](#1-create-product)
