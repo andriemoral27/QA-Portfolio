@@ -745,7 +745,7 @@ The token is obtained from the Login endpoint and typically expires after a set 
 
 ## Testing in Postman
 
-1. Import the Postman collection: `Act-5 Blog Platform.postman_collection.json`
+1. Import the Postman collection: `Blog Platform.postman_collection.json`
 2. Set the `base_url` variable in Postman environment or collection variables
 3. First, register a new user using the Register endpoint
 4. Login to obtain the JWT token
