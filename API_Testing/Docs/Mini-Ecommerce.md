@@ -1,647 +1,509 @@
-# Mini-Ecommerce API Documentation
-
-## Overview
-This document contains API requests for a Mini-Ecommerce application. These requests are designed to manage products, shopping cart, and orders in an e-commerce system. Each resource supports full CRUD operations (Create, Read, Update, Delete). Each example includes the HTTP method, URL, headers, request body, expected HTTP status codes, and notes for testing in Postman.
+# 📄 Mini-Ecommerce API Testing
 
 ## Table of Contents
-1. [Products](#products)
-   - 1.1 Post Product
-   - 1.2 Get All Products
-   - 1.3 Get Product by ID
-   - 1.4 Patch Product
-   - 1.5 Delete Product
-2. [Cart](#cart)
-   - 2.1 Add Item to Cart
-   - 2.2 Get Cart
-   - 2.3 Patch Cart
-   - 2.4 Delete Cart
-3. [Orders](#orders)
-   - 3.1 Order Post
-   - 3.2 Get All Orders
-   - 3.3 Get Order by ID
-   - 3.4 Patch Order
-   - 3.5 Order Delete
+1. [Create Product](#1-create-product)
+2. [Get All Products](#2-get-all-products)
+3. [Get Product by ID](#3-get-product-by-id)
+4. [Edit Product](#4-edit-product)
+5. [Delete Product](#5-delete-product)
+6. [Add to Cart](#6-add-to-cart)
+7. [Get Cart](#7-get-cart)
+8. [Update Cart Item](#8-update-cart-item)
+9. [Remove from Cart](#9-remove-from-cart)
+10. [Create Order](#10-create-order)
+11. [Get Order by ID](#11-get-order-by-id)
+12. [Get All Orders](#12-get-all-orders)
+
+## Overview
+This document contains API requests for a Mini-Ecommerce application. These requests are designed to manage products, shopping cart, and orders. Each example includes method, URL, headers, request body, expected HTTP status, and response structure.
 
 ---
 
-## Products
-
-### 1.1 Post Product
+## 1. Create Product
 
 **Method:** POST  
-**URL:** `{{base_url}}/products`
+**URL:** https://api.example.com/products
 
 **Headers:**
 - Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "name": "Laptop",
-  "price": 1500,
-  "stock": 10
+  "name": "Wireless Mouse",
+  "description": "Ergonomic wireless mouse with customizable DPI",
+  "price": 29.99,
+  "stock": 100,
+  "category": "Electronics"
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 201 Created
 
-**HTTP Status:** 201 Created  
-**Body:**
 ```json
 {
   "id": 1,
-  "name": "Laptop",
-  "price": 1500,
-  "stock": 10,
+  "name": "Wireless Mouse",
+  "description": "Ergonomic wireless mouse with customizable DPI",
+  "price": 29.99,
+  "stock": 100,
+  "category": "Electronics",
   "createdAt": "2024-11-02T12:00:00.000Z"
 }
 ```
 
 **Notes:**
-- Creates a new product in the inventory
-- Name, price, and stock are required fields
-- Price should be a positive number
+- Creates a new product
+- If name or price is missing → 400 Bad Request
+- Price should be a positive number → 400 Bad Request if invalid
 - Stock should be a non-negative integer
-- If required fields are missing -> 400 Bad Request
-- If price or stock is invalid -> 400 Bad Request
 
 ---
 
-### 1.2 Get All Products
+## 2. Get All Products
 
 **Method:** GET  
-**URL:** `{{base_url}}/products`
+**URL:** https://api.example.com/products
 
 **Headers:**
-- None required
-
-**Request Body:** None
+- Accept: application/json
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 [
   {
     "id": 1,
-    "name": "Laptop",
-    "price": 1500,
-    "stock": 10,
+    "name": "Wireless Mouse",
+    "description": "Ergonomic wireless mouse with customizable DPI",
+    "price": 29.99,
+    "stock": 100,
+    "category": "Electronics",
     "createdAt": "2024-11-02T12:00:00.000Z"
   },
   {
     "id": 2,
-    "name": "Gameboy ver 2000",
-    "price": 1400,
-    "stock": 30,
+    "name": "USB Keyboard",
+    "description": "Mechanical keyboard with RGB lighting",
+    "price": 79.99,
+    "stock": 50,
+    "category": "Electronics",
     "createdAt": "2024-11-02T12:05:00.000Z"
   }
 ]
 ```
 
 **Notes:**
-- Returns an array of all available products
+- Returns all products
 - If no products exist, returns an empty array []
-- Products may be sorted by creation date or name
+- Supports pagination with `page` and `limit` parameters
+- Can filter by category with `category` query parameter
 
 ---
 
-### 1.3 Get Product by ID
+## 3. Get Product by ID
 
 **Method:** GET  
-**URL:** `{{base_url}}/products/{product_id}`
+**URL:** https://api.example.com/products/1
 
 **Headers:**
-- None required
-
-**Request Body:** None
+- Accept: application/json
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 {
-  "id": 2,
-  "name": "Gameboy ver 2000",
-  "price": 1400,
-  "stock": 30,
-  "createdAt": "2024-11-02T12:05:00.000Z"
+  "id": 1,
+  "name": "Wireless Mouse",
+  "description": "Ergonomic wireless mouse with customizable DPI",
+  "price": 29.99,
+  "stock": 100,
+  "category": "Electronics",
+  "createdAt": "2024-11-02T12:00:00.000Z"
 }
 ```
 
-**Notes:**
-- Returns a single product by its ID
-- If product ID does not exist -> 404 Not Found
-- If product ID is invalid format -> 400 Bad Request
+**Error Response if not found:**
+**Expected HTTP Status:** 404 Not Found
+
+```json
+{
+  "error": "Product not found"
+}
+```
 
 ---
 
-### 1.4 Patch Product
+## 4. Edit Product
 
 **Method:** PATCH  
-**URL:** `{{base_url}}/products/{product_id}`
+**URL:** https://api.example.com/products/1
 
 **Headers:**
 - Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "name": "Gameboy ver 2000",
-  "price": 1400,
-  "stock": 30
+  "price": 24.99,
+  "stock": 85
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 {
-  "id": 2,
-  "name": "Gameboy ver 2000",
-  "price": 1400,
-  "stock": 30,
-  "createdAt": "2024-11-02T12:05:00.000Z",
+  "id": 1,
+  "name": "Wireless Mouse",
+  "description": "Ergonomic wireless mouse with customizable DPI",
+  "price": 24.99,
+  "stock": 85,
+  "category": "Electronics",
+  "createdAt": "2024-11-02T12:00:00.000Z",
   "updatedAt": "2024-11-02T12:30:00.000Z"
 }
 ```
 
 **Notes:**
 - Only updates the fields provided in the request body
-- If product ID does not exist -> 404 Not Found
-- Price and stock validation applies to updates as well
-- Unchanged fields retain their original values
+- If product ID does not exist → 404 Not Found
+- Price and stock validations apply
 
 ---
 
-### 1.5 Delete Product
+## 5. Delete Product
 
 **Method:** DELETE  
-**URL:** `{{base_url}}/products/{product_id}`
+**URL:** https://api.example.com/products/1
 
 **Headers:**
-- None required
-
-**Request Body:** None
+- Authorization: Bearer <valid_token>
 
 **Expected Response:**
-
-**HTTP Status:** 204 No Content  
-**Body:** Empty (indicating successful deletion)
+- HTTP Status: 204 No Content
+- Body: Empty (indicating successful deletion)
 
 **Notes:**
-- Deleting a non-existent product should return 404 Not Found
-- If product is in active carts or orders, may return 400 Bad Request or cascade delete (implementation dependent)
-- Successful deletion returns 204 with no body
-- Product is permanently removed from the database
+- Deleting a product may be blocked if it's in active orders → 409 Conflict
+- If product has cart items, those items should be invalidated
 
 ---
 
-## Cart
-
-### 2.1 Add Item to Cart
+## 6. Add to Cart
 
 **Method:** POST  
-**URL:** `http://localhost:3000/cart`
+**URL:** https://api.example.com/cart
 
 **Headers:**
+- Authorization: Bearer <valid_token>
 - Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "productId": 2,
-  "quantity": 1
+  "productId": 1,
+  "quantity": 2
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 201 Created
 
-**HTTP Status:** 201 Created  
-**Body:**
 ```json
 {
   "id": 1,
-  "productId": 2,
-  "quantity": 1,
+  "productId": 1,
+  "quantity": 2,
   "userId": 1,
-  "createdAt": "2024-11-02T12:15:00.000Z"
+  "createdAt": "2024-11-02T12:00:00.000Z"
 }
 ```
 
 **Notes:**
-- Adds a product to the shopping cart
-- productId and quantity are required fields
-- productId must reference an existing product
-- If productId does not exist -> 400 Bad Request
-- If quantity exceeds available stock -> 400 Bad Request
-- If product already in cart, may update quantity instead (implementation dependent)
+- Adds a product to the user's cart
+- Requires valid JWT token
+- productId must reference an existing product → 400 Bad Request if not found
+- If product is out of stock → 400 Bad Request
+- If product already in cart, updates quantity instead
 
 ---
 
-### 2.2 Get Cart
+## 7. Get Cart
 
 **Method:** GET  
-**URL:** `{{base_url}}/cart`
+**URL:** https://api.example.com/cart
 
 **Headers:**
-- None required
-
-**Request Body:** None
+- Authorization: Bearer <valid_token>
+- Accept: application/json
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 [
   {
     "id": 1,
-    "productId": 2,
-    "quantity": 1,
+    "productId": 1,
+    "quantity": 2,
     "userId": 1,
-    "createdAt": "2024-11-02T12:15:00.000Z"
+    "createdAt": "2024-11-02T12:00:00.000Z",
+    "product": {
+      "id": 1,
+      "name": "Wireless Mouse",
+      "price": 29.99
+    }
   },
   {
     "id": 2,
-    "productId": 4,
-    "quantity": 2,
+    "productId": 2,
+    "quantity": 1,
     "userId": 1,
-    "createdAt": "2024-11-02T12:20:00.000Z"
+    "createdAt": "2024-11-02T12:05:00.000Z",
+    "product": {
+      "id": 2,
+      "name": "USB Keyboard",
+      "price": 79.99
+    }
   }
 ]
 ```
 
 **Notes:**
-- Returns all items in the user's cart
+- Requires valid JWT token
+- Returns all items in the authenticated user's cart
 - If cart is empty, returns an empty array []
-- May include product details in the response (implementation dependent)
-- Cart is typically associated with a user (via userId or authentication)
+- Includes product details for each cart item
 
 ---
 
-### 2.3 Patch Cart
+## 8. Update Cart Item
 
 **Method:** PATCH  
-**URL:** `{{base_url}}/cart/{cart_item_id}`
+**URL:** https://api.example.com/cart/1
 
 **Headers:**
+- Authorization: Bearer <valid_token>
 - Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "productId": 2,
-  "quantity": 1
+  "quantity": 3
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 {
-  "id": 2,
-  "productId": 2,
-  "quantity": 1,
+  "id": 1,
+  "productId": 1,
+  "quantity": 3,
   "userId": 1,
-  "createdAt": "2024-11-02T12:20:00.000Z",
+  "createdAt": "2024-11-02T12:00:00.000Z",
   "updatedAt": "2024-11-02T12:30:00.000Z"
 }
 ```
 
 **Notes:**
-- Updates the quantity of a cart item
-- If cart item ID does not exist -> 404 Not Found
-- If quantity exceeds available stock -> 400 Bad Request
-- If quantity is set to 0, may remove the item (implementation dependent)
-- Cannot change productId (implementation dependent)
+- Requires valid JWT token
+- Users can only update their own cart items → 403 Forbidden otherwise
+- If quantity exceeds available stock → 400 Bad Request
+- If quantity is 0, item should be removed from cart
 
 ---
 
-### 2.4 Delete Cart
+## 9. Remove from Cart
 
 **Method:** DELETE  
-**URL:** `http://localhost:3000/cart/{cart_item_id}`
+**URL:** https://api.example.com/cart/1
 
 **Headers:**
-- None required
-
-**Request Body:** None
+- Authorization: Bearer <valid_token>
 
 **Expected Response:**
-
-**HTTP Status:** 204 No Content  
-**Body:** Empty (indicating successful deletion)
+- HTTP Status: 204 No Content
+- Body: Empty (indicating successful deletion)
 
 **Notes:**
-- Deleting a non-existent cart item should return 404 Not Found
-- Successful deletion returns 204 with no body
-- Removes the item from the cart
-- Does not affect the product record
+- Requires valid JWT token
+- Users can only remove their own cart items → 403 Forbidden otherwise
+- If cart item ID does not exist → 404 Not Found
 
 ---
 
-## Orders
-
-### 3.1 Order Post
+## 10. Create Order
 
 **Method:** POST  
-**URL:** `http://localhost:3000/orders`
+**URL:** https://api.example.com/orders
 
 **Headers:**
+- Authorization: Bearer <valid_token>
 - Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "userId": 2,
-  "items": [
-    {
-      "productId": 4,
-      "quantity": 5
-    }
-  ]
+  "shippingAddress": {
+    "street": "123 Main St",
+    "city": "New York",
+    "state": "NY",
+    "zipCode": "10001",
+    "country": "USA"
+  },
+  "paymentMethod": "credit_card"
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 201 Created
 
-**HTTP Status:** 201 Created  
-**Body:**
 ```json
 {
   "id": 1,
-  "userId": 2,
+  "userId": 1,
+  "status": "processing",
+  "total": 139.97,
+  "shippingAddress": {
+    "street": "123 Main St",
+    "city": "New York",
+    "state": "NY",
+    "zipCode": "10001",
+    "country": "USA"
+  },
   "items": [
     {
-      "productId": 4,
-      "quantity": 5,
-      "price": 1500
+      "productId": 1,
+      "name": "Wireless Mouse",
+      "quantity": 2,
+      "price": 29.99
+    },
+    {
+      "productId": 2,
+      "name": "USB Keyboard",
+      "quantity": 1,
+      "price": 79.99
     }
   ],
-  "total": 7500,
-  "status": "pending",
-  "createdAt": "2024-11-02T12:25:00.000Z"
+  "createdAt": "2024-11-02T12:00:00.000Z"
 }
 ```
 
 **Notes:**
-- Creates a new order from cart items
-- userId and items array are required
-- Each item must have productId and quantity
-- Products must exist and have sufficient stock
-- If stock is insufficient -> 400 Bad Request
-- Order creation typically reduces product stock
-- Total price is calculated automatically
+- Requires valid JWT token
+- Converts all items in the user's cart to an order
+- Clears the cart after order creation
+- Validates stock availability before creating order
+- If cart is empty → 400 Bad Request
+- If insufficient stock → 400 Bad Request
 
 ---
 
-### 3.2 Get All Orders
+## 11. Get Order by ID
 
 **Method:** GET  
-**URL:** `http://localhost:3000/orders`
+**URL:** https://api.example.com/orders/1
 
 **Headers:**
-- None required
-
-**Request Body:** None
+- Authorization: Bearer <valid_token>
+- Accept: application/json
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
+```json
+{
+  "id": 1,
+  "userId": 1,
+  "status": "processing",
+  "total": 139.97,
+  "shippingAddress": {
+    "street": "123 Main St",
+    "city": "New York",
+    "state": "NY",
+    "zipCode": "10001",
+    "country": "USA"
+  },
+  "items": [
+    {
+      "productId": 1,
+      "name": "Wireless Mouse",
+      "quantity": 2,
+      "price": 29.99
+    },
+    {
+      "productId": 2,
+      "name": "USB Keyboard",
+      "quantity": 1,
+      "price": 79.99
+    }
+  ],
+  "createdAt": "2024-11-02T12:00:00.000Z"
+}
+```
+
+**Error Response if not found:**
+**Expected HTTP Status:** 404 Not Found
+
+```json
+{
+  "error": "Order not found"
+}
+```
+
+**Notes:**
+- Requires valid JWT token
+- Users can only view their own orders → 403 Forbidden otherwise
+- If order ID does not exist → 404 Not Found
+
+---
+
+## 12. Get All Orders
+
+**Method:** GET  
+**URL:** https://api.example.com/orders
+
+**Headers:**
+- Authorization: Bearer <valid_token>
+- Accept: application/json
+
+**Expected Response:**
+**Expected HTTP Status:** 200 OK
+
 ```json
 [
   {
     "id": 1,
-    "userId": 2,
-    "items": [
-      {
-        "productId": 4,
-        "quantity": 5,
-        "price": 1500
-      }
-    ],
-    "total": 7500,
-    "status": "pending",
-    "createdAt": "2024-11-02T12:25:00.000Z"
+    "userId": 1,
+    "status": "processing",
+    "total": 139.97,
+    "createdAt": "2024-11-02T12:00:00.000Z"
   },
   {
     "id": 2,
-    "userId": 3,
-    "items": [
-      {
-        "productId": 2,
-        "quantity": 1,
-        "price": 1400
-      }
-    ],
-    "total": 1400,
-    "status": "completed",
-    "createdAt": "2024-11-02T12:30:00.000Z"
+    "userId": 1,
+    "status": "shipped",
+    "total": 49.99,
+    "createdAt": "2024-11-01T10:00:00.000Z"
   }
 ]
 ```
 
 **Notes:**
-- Returns an array of all orders
-- If no orders exist, returns an empty array []
-- Orders may be filtered by user (implementation dependent)
-- Orders are typically sorted by creation date
-
----
-
-### 3.3 Get Order by ID
-
-**Method:** GET  
-**URL:** `http://localhost:3000/orders/{order_id}`
-
-**Headers:**
-- None required
-
-**Request Body:** None
-
-**Expected Response:**
-
-**HTTP Status:** 200 OK  
-**Body:**
-```json
-{
-  "id": 3,
-  "userId": 2,
-  "items": [
-    {
-      "productId": 3,
-      "quantity": 10,
-      "price": 100
-    }
-  ],
-  "total": 1000,
-  "status": "pending",
-  "createdAt": "2024-11-02T12:35:00.000Z"
-}
-```
-
-**Notes:**
-- Returns a single order by its ID
-- If order ID does not exist -> 404 Not Found
-- If order ID is invalid format -> 400 Bad Request
-
----
-
-### 3.4 Patch Order
-
-**Method:** PATCH  
-**URL:** `http://localhost:3000/orders/{order_id}`
-
-**Headers:**
-- Content-Type: application/json
-
-**Request Body:**
-```json
-{
-  "userId": 2,
-  "items": [
-    {
-      "productId": 3,
-      "quantity": 10
-    }
-  ]
-}
-```
-
-**Expected Response:**
-
-**HTTP Status:** 200 OK  
-**Body:**
-```json
-{
-  "id": 3,
-  "userId": 2,
-  "items": [
-    {
-      "productId": 3,
-      "quantity": 10,
-      "price": 100
-    }
-  ],
-  "total": 1000,
-  "status": "pending",
-  "createdAt": "2024-11-02T12:35:00.000Z",
-  "updatedAt": "2024-11-02T12:40:00.000Z"
-}
-```
-
-**Notes:**
-- Updates order details
-- If order ID does not exist -> 404 Not Found
-- Cannot change userId (implementation dependent)
-- Stock may be adjusted when updating items
-- Status updates (e.g., pending -> completed) may be handled separately
-
----
-
-### 3.5 Order Delete
-
-**Method:** DELETE  
-**URL:** `http://localhost:3000/orders/{order_id}`
-
-**Headers:**
-- None required
-
-**Request Body:** None
-
-**Expected Response:**
-
-**HTTP Status:** 204 No Content  
-**Body:** Empty (indicating successful deletion)
-
-**Notes:**
-- Deleting a non-existent order should return 404 Not Found
-- Deleting a completed order may be restricted (implementation dependent)
-- Successful deletion returns 204 with no body
-- May or may not restore product stock (implementation dependent)
-
----
-
-## Common Status Codes
-
-| Status Code | Description |
-|-------------|-------------|
-| 200 OK | Request succeeded (GET, PATCH) |
-| 201 Created | Resource successfully created (POST) |
-| 204 No Content | Successful deletion (DELETE) |
-| 400 Bad Request | Invalid request data or format |
-| 404 Not Found | Resource not found |
-| 500 Internal Server Error | Server error occurred |
-
-## Request/Response Fields
-
-### Product Fields
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| id | number | Auto | Unique identifier for the product |
-| name | string | Yes | Product name |
-| price | number | Yes | Product price (positive number) |
-| stock | number | Yes | Available stock quantity (non-negative) |
-| createdAt | string | Auto | ISO 8601 timestamp of creation |
-| updatedAt | string | Auto | ISO 8601 timestamp of last update |
-
-### Cart Item Fields
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| id | number | Auto | Unique identifier for the cart item |
-| productId | number | Yes | ID of the product in cart |
-| quantity | number | Yes | Quantity of the product |
-| userId | number | Auto | ID of the user who owns the cart |
-| createdAt | string | Auto | ISO 8601 timestamp of creation |
-| updatedAt | string | Auto | ISO 8601 timestamp of last update |
-
-### Order Fields
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| id | number | Auto | Unique identifier for the order |
-| userId | number | Yes | ID of the user who placed the order |
-| items | array | Yes | Array of order items (productId, quantity, price) |
-| total | number | Auto | Total order price (calculated) |
-| status | string | Auto | Order status (pending, completed, cancelled) |
-| createdAt | string | Auto | ISO 8601 timestamp of creation |
-| updatedAt | string | Auto | ISO 8601 timestamp of last update |
-
-## Testing in Postman
-
-1. Import the Postman collection: `Mini-Ecommerce.postman_collection.json`
-2. Set the `base_url` variable in Postman environment or collection variables
-3. Create products first (cart and orders require product IDs)
-4. Test GET endpoints to retrieve product data
-5. Add items to cart using product IDs
-6. Test cart operations:
-   - Get cart items
-   - Update cart item quantities
-   - Remove items from cart
-7. Create orders from cart items
-8. Test order operations:
-   - Get all orders
-   - Get specific order by ID
-   - Update order details
-   - Delete orders
-9. Verify response status codes match expected values
-10. Test error scenarios:
-    - Add item to cart with non-existent productId (should return 400)
-    - Create order with insufficient stock (should return 400)
-    - Get/delete non-existent IDs (should return 404)
-11. Test stock management:
-    - Verify stock decreases when items are added to cart (if implemented)
-    - Verify stock decreases when orders are created
-    - Verify stock is restored when cart items are removed (if implemented)
-12. Test order total calculation
-13. Verify that orders correctly reference products and users
+- Requires valid JWT token
+- Returns all orders for the authenticated user
+- If user has no orders, returns an empty array []
+- Supports pagination with `page` and `limit` parameters
+- Can filter by status with `status` query parameter
