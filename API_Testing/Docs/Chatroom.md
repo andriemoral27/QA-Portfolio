@@ -1,4 +1,4 @@
-# 📄 Chatroom API Testing
+# 📄 Chatroom API 
 
 ## Table of Contents
 1. [Create Chatroom](#1-create-chatroom)
