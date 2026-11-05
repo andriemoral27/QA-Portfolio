@@ -839,7 +839,7 @@ The token is obtained from the Login endpoint and includes the user's role for a
 
 ## Testing in Postman
 
-1. Import the Postman collection: `Activity-10 Organization and event.postman_collection.json`
+1. Import the Postman collection: `Organization and event.postman_collection.json`
 2. Set the `base3_url` variable in Postman environment or collection variables
 3. Register a user and an admin using the Register endpoints
 4. Login as both user and admin to obtain their respective JWT tokens
