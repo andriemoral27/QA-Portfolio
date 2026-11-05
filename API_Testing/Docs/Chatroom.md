@@ -417,7 +417,7 @@ This document contains API requests for a Chatroom application. These requests a
 
 ## Testing in Postman
 
-1. Import the Postman collection: `Act-8 Chatroom.postman_collection.json`
+1. Import the Postman collection: `Chatroom.postman_collection.json`
 2. Set the `base_url` variable in Postman environment or collection variables
 3. Create chatrooms first (messages require chatroom IDs)
 4. Test GET endpoints to retrieve chatroom data
