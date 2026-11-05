@@ -1,4 +1,4 @@
-# 📄 Bookshelf API Testing
+# 📄 Bookshelf API 
 
 ## Table of Contents
 1. [Create Category](#1-create-category)
