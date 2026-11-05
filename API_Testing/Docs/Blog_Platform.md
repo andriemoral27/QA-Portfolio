@@ -1,95 +1,81 @@
-# Blog Platform API Testing
-
-## Overview
-This document contains API test cases for a Blog Platform application with JWT authentication. These test cases validate user management, blog posts, comments, and reactions (likes/dislikes). Each test case includes the HTTP method, endpoint, headers, request body, expected HTTP status codes, and response validation criteria.
+# 📄 Blog Platform API Testing
 
 ## Table of Contents
-1. [Authentication](#authentication)
-   - 1.1 Register
-   - 1.2 Login
-2. [Users](#users)
-   - 2.1 Get All Users
-   - 2.2 Get Users with Pagination
-   - 2.3 Get One User
-   - 2.4 Delete User
-3. [Posts](#posts)
-   - 3.1 Create Post
-   - 3.2 Get Posts with Pagination
-   - 3.3 Get One Post
-   - 3.4 Edit Post
-   - 3.5 Delete Post
-   - 3.6 Like Post
-   - 3.7 Dislike Post
-4. [Comments](#comments)
-   - 4.1 Create Comment on Post
-   - 4.2 Get Comments on Post with Pagination
-   - 4.3 Edit Comment
-   - 4.4 Delete Comment
-   - 4.5 Like Comment
-   - 4.6 Dislike Comment
-   - 4.7 Get All Reactions
+1. [Register](#1-register)
+2. [Login](#2-login)
+3. [Create User](#3-create-user)
+4. [Get All Users](#4-get-all-users)
+5. [Get User by ID](#5-get-user-by-id)
+6. [Edit User](#6-edit-user)
+7. [Delete User](#7-delete-user)
+8. [Create Post](#8-create-post)
+9. [Get All Posts](#9-get-all-posts)
+10. [Get Post by ID](#10-get-post-by-id)
+11. [Edit Post](#11-edit-post)
+12. [Delete Post](#12-delete-post)
+13. [Like Post](#13-like-post)
+14. [Dislike Post](#14-dislike-post)
+15. [Create Comment](#15-create-comment)
+16. [Get Post Comments](#16-get-post-comments)
+17. [Get Comment by ID](#17-get-comment-by-id)
+18. [Edit Comment](#18-edit-comment)
+19. [Delete Comment](#19-delete-comment)
+20. [React to Comment](#20-react-to-comment)
+
+## Overview
+This document contains API requests for a Blog Platform application. These requests are designed to manage users, posts, comments, and reactions. The platform includes authentication, CRUD operations for all resources, and social features like likes and comments. Each example includes method, URL, headers, request body, expected HTTP status, and response structure.
 
 ---
 
-## Authentication
+## 1. Register
 
-### 1.1 Register
-
-**Test Case:** Create a new user account
-
-**HTTP Method:** POST  
-**Endpoint:** `/auth/register`
+**Method:** POST  
+**URL:** https://api.example.com/auth/register
 
 **Headers:**
-```
-Content-Type: application/json
-```
+- Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
+  "username": "johndoe",
   "email": "john@example.com",
-  "name": "John Doe",
   "password": "password123"
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 201 Created
 
-**HTTP Status Code:** 201 Created
-
-**Response Body:**
 ```json
 {
   "message": "User registered successfully",
   "user": {
-    "id": 18,
-    "email": "john@example.com",
-    "name": "John Doe"
+    "id": 1,
+    "username": "johndoe",
+    "email": "john@example.com"
   }
 }
 ```
 
-**Validation Criteria:**
-- Response status code is 201
-- Response body contains success message and user object
-- Email must be unique → 409 Conflict if duplicate
+**Notes:**
+- Creates a new user account
+- Email and username must be unique → 409 Conflict if already exists
+- Password should meet minimum security requirements
 
 ---
 
-### 1.2 Login
+## 2. Login
 
-**Test Case:** Authenticate user and receive JWT token
-
-**HTTP Method:** POST  
-**Endpoint:** `/auth/login`
+**Method:** POST  
+**URL:** https://api.example.com/auth/login
 
 **Headers:**
-```
-Content-Type: application/json
-```
+- Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
   "email": "john@example.com",
@@ -98,328 +84,333 @@ Content-Type: application/json
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status Code:** 200 OK
-
-**Response Body:**
 ```json
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE4LCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20iLCJpYXQiOjE3Njg2NTYzMDcsImV4cCI6MTc2OTI2MTEwN30.fdEDykApAreSrshblP55vL2EUbaZgJM7oKil37_w0lY",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "user": {
-    "id": 18,
-    "email": "john@example.com",
-    "name": "John Doe"
+    "id": 1,
+    "username": "johndoe",
+    "email": "john@example.com"
   }
 }
 ```
 
-**Validation Criteria:**
-- Response status code is 200
-- Response body contains valid JWT token
-- Invalid credentials → 401 Unauthorized
+**Notes:**
+- Returns a JWT token for authentication
+- Token should be used in Authorization header for protected routes
+- If credentials are invalid → 401 Unauthorized
 
 ---
 
-## Users
+## 3. Create User
 
-### 2.1 Get All Users
-
-**Test Case:** Retrieve all registered users (requires authentication)
-
-**HTTP Method:** GET  
-**Endpoint:** `/users`
+**Method:** POST  
+**URL:** https://api.example.com/users
 
 **Headers:**
-```
-Authorization: Bearer <valid_token>
-Accept: application/json
-```
+- Authorization: Bearer <valid_token>
+- Content-Type: application/json
+- Accept: application/json
 
-**Request Body:** None
-
-**Expected Response:**
-
-**HTTP Status Code:** 200 OK
-
-**Response Body:**
-```json
-[
-  {
-    "id": 18,
-    "email": "john@example.com",
-    "name": "John Doe",
-    "createdAt": "2024-11-02T12:00:00.000Z"
-  }
-]
-```
-
-**Validation Criteria:**
-- Response status code is 200
-- Response body is an array
-- Missing/invalid token → 401 Unauthorized
-
----
-
-### 2.2 Get Users with Pagination
-
-**Test Case:** Retrieve users with pagination
-
-**HTTP Method:** GET  
-**Endpoint:** `/users?page=1&limit=10`
-
-**Headers:**
-```
-Authorization: Bearer <valid_token>
-Accept: application/json
-```
-
-**Request Body:** None
-
-**Expected Response:**
-
-**HTTP Status Code:** 200 OK
-
-**Response Body:**
-```json
-[
-  {
-    "id": 18,
-    "email": "john@example.com",
-    "name": "John Doe",
-    "createdAt": "2024-11-02T12:00:00.000Z"
-  }
-]
-```
-
-**Validation Criteria:**
-- Response status code is 200
-- Pagination parameters are respected
-
----
-
-### 2.3 Get One User
-
-**Test Case:** Retrieve a specific user by ID
-
-**HTTP Method:** GET  
-**Endpoint:** `/users/{user_id}`
-
-**Headers:**
-```
-Authorization: Bearer <valid_token>
-Accept: application/json
-```
-
-**Request Body:** None
-
-**Expected Response:**
-
-**HTTP Status Code:** 200 OK
-
-**Response Body:**
+**Body:**
 ```json
 {
-  "id": 19,
+  "username": "janedoe",
   "email": "jane@example.com",
-  "name": "Jane Smith",
-  "createdAt": "2024-11-02T12:05:00.000Z"
-}
-```
-
-**Validation Criteria:**
-- Response status code is 200
-- `id` matches requested `user_id`
-- Non-existent ID → 404 Not Found
-
----
-
-### 2.4 Delete User
-
-**Test Case:** Delete a user account
-
-**HTTP Method:** DELETE  
-**Endpoint:** `/users/{user_id}`
-
-**Headers:**
-```
-Authorization: Bearer <valid_token>
-Accept: application/json
-```
-
-**Request Body:** None
-
-**Expected Response:**
-
-**HTTP Status Code:** 204 No Content
-
-**Response Body:** Empty
-
-**Validation Criteria:**
-- Response status code is 204
-- Response body is empty
-- Users can typically only delete their own account → 403 Forbidden otherwise
-
----
-
-## Posts
-
-### 3.1 Create Post
-
-**Test Case:** Create a new blog post
-
-**HTTP Method:** POST  
-**Endpoint:** `/posts`
-
-**Headers:**
-```
-Authorization: Bearer <valid_token>
-Content-Type: application/json
-```
-
-**Request Body:**
-```json
-{
-  "title": "My First Post",
-  "content": "This is the content of my first post!"
+  "password": "password123",
+  "bio": "Software developer and tech enthusiast"
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 201 Created
 
-**HTTP Status Code:** 201 Created
-
-**Response Body:**
 ```json
 {
-  "id": 30,
-  "title": "My First Post",
-  "content": "This is the content of my first post!",
-  "userId": 18,
+  "id": 2,
+  "username": "janedoe",
+  "email": "jane@example.com",
+  "bio": "Software developer and tech enthusiast",
+  "createdAt": "2024-11-02T12:00:00.000Z"
+}
+```
+
+**Notes:**
+- Requires valid JWT token (admin only)
+- Non-admin users → 403 Forbidden
+
+---
+
+## 4. Get All Users
+
+**Method:** GET  
+**URL:** https://api.example.com/users
+
+**Headers:**
+- Authorization: Bearer <valid_token>
+- Accept: application/json
+
+**Expected Response:**
+**Expected HTTP Status:** 200 OK
+
+```json
+[
+  {
+    "id": 1,
+    "username": "johndoe",
+    "email": "john@example.com",
+    "bio": null,
+    "createdAt": "2024-11-02T12:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "username": "janedoe",
+    "email": "jane@example.com",
+    "bio": "Software developer and tech enthusiast",
+    "createdAt": "2024-11-02T12:05:00.000Z"
+  }
+]
+```
+
+**Notes:**
+- Requires valid JWT token
+- Returns list of all users
+- Pagination may be supported with `page` and `limit` parameters
+
+---
+
+## 5. Get User by ID
+
+**Method:** GET  
+**URL:** https://api.example.com/users/1
+
+**Headers:**
+- Authorization: Bearer <valid_token>
+- Accept: application/json
+
+**Expected Response:**
+**Expected HTTP Status:** 200 OK
+
+```json
+{
+  "id": 1,
+  "username": "johndoe",
+  "email": "john@example.com",
+  "bio": null,
+  "createdAt": "2024-11-02T12:00:00.000Z"
+}
+```
+
+**Error Response if not found:**
+**Expected HTTP Status:** 404 Not Found
+
+```json
+{
+  "error": "User not found"
+}
+```
+
+---
+
+## 6. Edit User
+
+**Method:** PATCH  
+**URL:** https://api.example.com/users/1
+
+**Headers:**
+- Authorization: Bearer <valid_token>
+- Content-Type: application/json
+- Accept: application/json
+
+**Body:**
+```json
+{
+  "bio": "Passionate blogger and developer"
+}
+```
+
+**Expected Response:**
+**Expected HTTP Status:** 200 OK
+
+```json
+{
+  "id": 1,
+  "username": "johndoe",
+  "email": "john@example.com",
+  "bio": "Passionate blogger and developer",
+  "createdAt": "2024-11-02T12:00:00.000Z",
+  "updatedAt": "2024-11-02T12:30:00.000Z"
+}
+```
+
+**Notes:**
+- Users can only edit their own profile → 403 Forbidden otherwise
+- Only updates the fields provided in the request body
+
+---
+
+## 7. Delete User
+
+**Method:** DELETE  
+**URL:** https://api.example.com/users/1
+
+**Headers:**
+- Authorization: Bearer <valid_token>
+
+**Expected Response:**
+- HTTP Status: 204 No Content
+- Body: Empty (indicating successful deletion)
+
+**Notes:**
+- Users can only delete their own account → 403 Forbidden otherwise
+- Cascade delete: associated posts and comments should also be deleted
+
+---
+
+## 8. Create Post
+
+**Method:** POST  
+**URL:** https://api.example.com/posts
+
+**Headers:**
+- Authorization: Bearer <valid_token>
+- Content-Type: application/json
+- Accept: application/json
+
+**Body:**
+```json
+{
+  "title": "Getting Started with API Testing",
+  "content": "API testing is crucial for ensuring your backend services work correctly..."
+}
+```
+
+**Expected Response:**
+**Expected HTTP Status:** 201 Created
+
+```json
+{
+  "id": 1,
+  "title": "Getting Started with API Testing",
+  "content": "API testing is crucial for ensuring your backend services work correctly...",
+  "authorId": 1,
   "likes": 0,
   "dislikes": 0,
   "createdAt": "2024-11-02T12:00:00.000Z"
 }
 ```
 
-**Validation Criteria:**
-- Response status code is 201
-- `userId` matches authenticated user
-- Title and content are required
+**Notes:**
+- Requires valid JWT token
+- authorId is automatically set to the authenticated user's ID
+- If title or content is missing → 400 Bad Request
 
 ---
 
-### 3.2 Get Posts with Pagination
+## 9. Get All Posts
 
-**Test Case:** Retrieve posts with pagination
-
-**HTTP Method:** GET  
-**Endpoint:** `/posts?page=1&limit=10`
+**Method:** GET  
+**URL:** https://api.example.com/posts
 
 **Headers:**
-```
-Authorization: Bearer <valid_token>
-Accept: application/json
-```
-
-**Request Body:** None
+- Accept: application/json
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status Code:** 200 OK
-
-**Response Body:**
 ```json
 [
   {
-    "id": 30,
-    "title": "My First Post",
-    "content": "This is the content of my first post!",
-    "userId": 18,
+    "id": 1,
+    "title": "Getting Started with API Testing",
+    "content": "API testing is crucial for ensuring your backend services work correctly...",
+    "authorId": 1,
     "likes": 5,
     "dislikes": 1,
     "createdAt": "2024-11-02T12:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "title": "Understanding REST APIs",
+    "content": "REST is an architectural style for designing networked applications...",
+    "authorId": 2,
+    "likes": 3,
+    "dislikes": 0,
+    "createdAt": "2024-11-02T12:10:00.000Z"
   }
 ]
 ```
 
-**Validation Criteria:**
-- Response status code is 200
-- Response body is an array
-- Pagination parameters are respected
+**Notes:**
+- No authentication required for viewing posts
+- Supports pagination with `page` and `limit` parameters
+- Can filter by author with `authorId` query parameter
 
 ---
 
-### 3.3 Get One Post
+## 10. Get Post by ID
 
-**Test Case:** Retrieve a specific post by ID
-
-**HTTP Method:** GET  
-**Endpoint:** `/posts/{post_id}`
+**Method:** GET  
+**URL:** https://api.example.com/posts/1
 
 **Headers:**
-```
-Authorization: Bearer <valid_token>
-Accept: application/json
-```
-
-**Request Body:** None
+- Accept: application/json
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status Code:** 200 OK
-
-**Response Body:**
 ```json
 {
-  "id": 30,
-  "title": "My First Post",
-  "content": "This is the content of my first post!",
-  "userId": 18,
+  "id": 1,
+  "title": "Getting Started with API Testing",
+  "content": "API testing is crucial for ensuring your backend services work correctly...",
+  "authorId": 1,
   "likes": 5,
   "dislikes": 1,
   "createdAt": "2024-11-02T12:00:00.000Z"
 }
 ```
 
-**Validation Criteria:**
-- Response status code is 200
-- `id` matches requested `post_id`
-- Non-existent ID → 404 Not Found
+**Error Response if not found:**
+**Expected HTTP Status:** 404 Not Found
+
+```json
+{
+  "error": "Post not found"
+}
+```
 
 ---
 
-### 3.4 Edit Post
+## 11. Edit Post
 
-**Test Case:** Update an existing post
-
-**HTTP Method:** PATCH  
-**Endpoint:** `/posts/{post_id}`
+**Method:** PATCH  
+**URL:** https://api.example.com/posts/1
 
 **Headers:**
-```
-Authorization: Bearer <valid_token>
-Content-Type: application/json
-```
+- Authorization: Bearer <valid_token>
+- Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "title": "Updated Post Title",
-  "content": "Updated content"
+  "title": "Getting Started with API Testing - Updated Guide",
+  "content": "Updated content with more details..."
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status Code:** 200 OK
-
-**Response Body:**
 ```json
 {
-  "id": 30,
-  "title": "Updated Post Title",
-  "content": "Updated content",
-  "userId": 18,
+  "id": 1,
+  "title": "Getting Started with API Testing - Updated Guide",
+  "content": "Updated content with more details...",
+  "authorId": 1,
   "likes": 5,
   "dislikes": 1,
   "createdAt": "2024-11-02T12:00:00.000Z",
@@ -427,59 +418,41 @@ Content-Type: application/json
 }
 ```
 
-**Validation Criteria:**
-- Response status code is 200
-- Only provided fields are updated
+**Notes:**
 - Users can only edit their own posts → 403 Forbidden otherwise
+- Only updates the fields provided in the request body
 
 ---
 
-### 3.5 Delete Post
+## 12. Delete Post
 
-**Test Case:** Delete a post
-
-**HTTP Method:** DELETE  
-**Endpoint:** `/posts/{post_id}`
+**Method:** DELETE  
+**URL:** https://api.example.com/posts/1
 
 **Headers:**
-```
-Authorization: Bearer <valid_token>
-Accept: application/json
-```
-
-**Request Body:** None
+- Authorization: Bearer <valid_token>
 
 **Expected Response:**
+- HTTP Status: 204 No Content
+- Body: Empty (indicating successful deletion)
 
-**HTTP Status Code:** 204 No Content
-
-**Response Body:** Empty
-
-**Validation Criteria:**
-- Response status code is 204
+**Notes:**
 - Users can only delete their own posts → 403 Forbidden otherwise
+- Cascade delete: associated comments should also be deleted
 
 ---
 
-### 3.6 Like Post
+## 13. Like Post
 
-**Test Case:** Like a post
-
-**HTTP Method:** POST  
-**Endpoint:** `/posts/{post_id}/like`
+**Method:** POST  
+**URL:** https://api.example.com/posts/1/like
 
 **Headers:**
-```
-Authorization: Bearer <valid_token>
-```
-
-**Request Body:** None
+- Authorization: Bearer <valid_token>
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status Code:** 200 OK
-
-**Response Body:**
 ```json
 {
   "message": "Post liked successfully",
@@ -488,32 +461,24 @@ Authorization: Bearer <valid_token>
 }
 ```
 
-**Validation Criteria:**
-- Response status code is 200
-- Like count increments by 1
-- Non-existent post → 404 Not Found
+**Notes:**
+- Requires valid JWT token
+- Users cannot like their own posts → 400 Bad Request
+- If already liked → 400 Bad Request or removes the like
 
 ---
 
-### 3.7 Dislike Post
+## 14. Dislike Post
 
-**Test Case:** Dislike a post
-
-**HTTP Method:** POST  
-**Endpoint:** `/posts/{post_id}/dislike`
+**Method:** POST  
+**URL:** https://api.example.com/posts/1/dislike
 
 **Headers:**
-```
-Authorization: Bearer <valid_token>
-```
-
-**Request Body:** None
+- Authorization: Bearer <valid_token>
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status Code:** 200 OK
-
-**Response Body:**
 ```json
 {
   "message": "Post disliked successfully",
@@ -522,382 +487,207 @@ Authorization: Bearer <valid_token>
 }
 ```
 
-**Validation Criteria:**
-- Response status code is 200
-- Dislike count increments by 1
+**Notes:**
+- Requires valid JWT token
+- Users cannot dislike their own posts → 400 Bad Request
+- If already disliked → 400 Bad Request or removes the dislike
 
 ---
 
-## Comments
+## 15. Create Comment
 
-### 4.1 Create Comment on Post
-
-**Test Case:** Add a comment to a post
-
-**HTTP Method:** POST  
-**Endpoint:** `/posts/{post_id}/comments`
+**Method:** POST  
+**URL:** https://api.example.com/posts/1/comments
 
 **Headers:**
-```
-Authorization: Bearer <valid_token>
-Content-Type: application/json
-```
+- Authorization: Bearer <valid_token>
+- Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "content": "Great post! Thanks for sharing."
+  "content": "Great article! Very helpful."
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 201 Created
 
-**HTTP Status Code:** 201 Created
-
-**Response Body:**
 ```json
 {
-  "id": 22,
-  "content": "Great post! Thanks for sharing.",
-  "postId": 30,
-  "userId": 18,
+  "id": 1,
+  "content": "Great article! Very helpful.",
+  "postId": 1,
+  "authorId": 2,
   "likes": 0,
-  "dislikes": 0,
   "createdAt": "2024-11-02T12:15:00.000Z"
 }
 ```
 
-**Validation Criteria:**
-- Response status code is 201
-- `postId` matches the post
-- `userId` matches authenticated user
+**Notes:**
+- Requires valid JWT token
+- postId is derived from the URL
+- authorId is automatically set to the authenticated user's ID
+- If content is missing → 400 Bad Request
 
 ---
 
-### 4.2 Get Comments on Post with Pagination
+## 16. Get Post Comments
 
-**Test Case:** Retrieve comments for a post
-
-**HTTP Method:** GET  
-**Endpoint:** `/posts/{post_id}/comments?page=1&limit=10`
+**Method:** GET  
+**URL:** https://api.example.com/posts/1/comments
 
 **Headers:**
-```
-Authorization: Bearer <valid_token>
-Accept: application/json
-```
-
-**Request Body:** None
+- Accept: application/json
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status Code:** 200 OK
-
-**Response Body:**
 ```json
 [
   {
-    "id": 22,
-    "content": "Great post! Thanks for sharing.",
-    "postId": 30,
-    "userId": 18,
-    "likes": 1,
-    "dislikes": 0,
+    "id": 1,
+    "content": "Great article! Very helpful.",
+    "postId": 1,
+    "authorId": 2,
+    "likes": 0,
     "createdAt": "2024-11-02T12:15:00.000Z"
+  },
+  {
+    "id": 2,
+    "content": "Thanks for sharing!",
+    "postId": 1,
+    "authorId": 3,
+    "likes": 1,
+    "createdAt": "2024-11-02T12:20:00.000Z"
   }
 ]
 ```
 
-**Validation Criteria:**
-- Response status code is 200
-- All comments belong to the specified post
+**Notes:**
+- No authentication required for viewing comments
+- Returns all comments for a specific post
+- If post has no comments, returns an empty array []
 
 ---
 
-### 4.3 Edit Comment
+## 17. Get Comment by ID
 
-**Test Case:** Update a comment
-
-**HTTP Method:** PATCH  
-**Endpoint:** `/posts/{post_id}/comments/{comment_id}`
+**Method:** GET  
+**URL:** https://api.example.com/comments/1
 
 **Headers:**
-```
-Authorization: Bearer <valid_token>
-Content-Type: application/json
-```
+- Accept: application/json
 
-**Request Body:**
+**Expected Response:**
+**Expected HTTP Status:** 200 OK
+
 ```json
 {
-  "content": "Updated comment text"
+  "id": 1,
+  "content": "Great article! Very helpful.",
+  "postId": 1,
+  "authorId": 2,
+  "likes": 0,
+  "createdAt": "2024-11-02T12:15:00.000Z"
+}
+```
+
+**Error Response if not found:**
+**Expected HTTP Status:** 404 Not Found
+
+```json
+{
+  "error": "Comment not found"
+}
+```
+
+---
+
+## 18. Edit Comment
+
+**Method:** PATCH  
+**URL:** https://api.example.com/comments/1
+
+**Headers:**
+- Authorization: Bearer <valid_token>
+- Content-Type: application/json
+- Accept: application/json
+
+**Body:**
+```json
+{
+  "content": "Great article! Very helpful. Thanks for writing it."
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status Code:** 200 OK
-
-**Response Body:**
 ```json
 {
-  "id": 22,
-  "content": "Updated comment text",
-  "postId": 30,
-  "userId": 18,
-  "likes": 1,
-  "dislikes": 0,
+  "id": 1,
+  "content": "Great article! Very helpful. Thanks for writing it.",
+  "postId": 1,
+  "authorId": 2,
+  "likes": 0,
   "createdAt": "2024-11-02T12:15:00.000Z",
   "updatedAt": "2024-11-02T12:35:00.000Z"
 }
 ```
 
-**Validation Criteria:**
-- Response status code is 200
+**Notes:**
 - Users can only edit their own comments → 403 Forbidden otherwise
+- Only updates the fields provided in the request body
 
 ---
 
-### 4.4 Delete Comment
+## 19. Delete Comment
 
-**Test Case:** Delete a comment
-
-**HTTP Method:** DELETE  
-**Endpoint:** `/posts/{post_id}/comments/{comment_id}`
+**Method:** DELETE  
+**URL:** https://api.example.com/comments/1
 
 **Headers:**
-```
-Authorization: Bearer <valid_token>
-Accept: application/json
-```
-
-**Request Body:** None
+- Authorization: Bearer <valid_token>
 
 **Expected Response:**
+- HTTP Status: 204 No Content
+- Body: Empty (indicating successful deletion)
 
-**HTTP Status Code:** 204 No Content
-
-**Response Body:** Empty
-
-**Validation Criteria:**
-- Response status code is 204
+**Notes:**
 - Users can only delete their own comments → 403 Forbidden otherwise
 
 ---
 
-### 4.5 Like Comment
+## 20. React to Comment
 
-**Test Case:** Like a comment
-
-**HTTP Method:** POST  
-**Endpoint:** `/posts/{post_id}/comments/{comment_id}/like`
+**Method:** POST  
+**URL:** https://api.example.com/comments/1/react
 
 **Headers:**
-```
-Authorization: Bearer <valid_token>
-```
+- Authorization: Bearer <valid_token>
+- Content-Type: application/json
+- Accept: application/json
 
-**Request Body:** None
-
-**Expected Response:**
-
-**HTTP Status Code:** 200 OK
-
-**Response Body:**
+**Body:**
 ```json
 {
-  "message": "Comment liked successfully",
-  "likes": 2,
-  "dislikes": 0
+  "reaction": "like"
 }
 ```
 
-**Validation Criteria:**
-- Response status code is 200
-- Like count increments by 1
-
----
-
-### 4.6 Dislike Comment
-
-**Test Case:** Dislike a comment
-
-**HTTP Method:** POST  
-**Endpoint:** `/posts/{post_id}/comments/{comment_id}/dislike`
-
-**Headers:**
-```
-Authorization: Bearer <valid_token>
-```
-
-**Request Body:** None
-
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status Code:** 200 OK
-
-**Response Body:**
 ```json
 {
-  "message": "Comment disliked successfully",
-  "likes": 1,
-  "dislikes": 1
+  "message": "Reaction added successfully",
+  "likes": 1
 }
 ```
 
-**Validation Criteria:**
-- Response status code is 200
-- Dislike count increments by 1
-
----
-
-### 4.7 Get All Reactions
-
-**Test Case:** Retrieve all reactions for a comment
-
-**HTTP Method:** GET  
-**Endpoint:** `/posts/{post_id}/comments/{comment_id}/reaction`
-
-**Headers:**
-```
-Authorization: Bearer <valid_token>
-Accept: application/json
-```
-
-**Request Body:** None
-
-**Expected Response:**
-
-**HTTP Status Code:** 200 OK
-
-**Response Body:**
-```json
-{
-  "commentId": 22,
-  "likes": 2,
-  "dislikes": 1,
-  "reactions": [
-    {
-      "userId": 18,
-      "type": "like",
-      "createdAt": "2024-11-02T12:20:00.000Z"
-    },
-    {
-      "userId": 19,
-      "type": "dislike",
-      "createdAt": "2024-11-02T12:25:00.000Z"
-    }
-  ]
-}
-```
-
-**Validation Criteria:**
-- Response status code is 200
-- Returns detailed reaction information
-- Shows which users liked/disliked
-
----
-
-## Test Execution
-
-### Using cURL
-```bash
-# Register
-curl -X POST http://api.example.com/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"email":"john@example.com","name":"John Doe","password":"password123"}'
-
-# Login
-curl -X POST http://api.example.com/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"john@example.com","password":"password123"}'
-
-# Create Post
-curl -X POST http://api.example.com/posts \
-  -H "Authorization: Bearer TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"title":"My First Post","content":"This is the content of my first post!"}'
-
-# Like Post
-curl -X POST http://api.example.com/posts/30/like \
-  -H "Authorization: Bearer TOKEN"
-
-# Create Comment
-curl -X POST http://api.example.com/posts/30/comments \
-  -H "Authorization: Bearer TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"content":"Great post! Thanks for sharing."}'
-```
-
-### Using HTTPie
-```bash
-# Register
-http POST http://api.example.com/auth/register \
-  email="john@example.com" name="John Doe" password="password123"
-
-# Login
-http POST http://api.example.com/auth/login \
-  email="john@example.com" password="password123"
-
-# Create Post
-http POST http://api.example.com/posts \
-  Authorization:"Bearer TOKEN" \
-  title="My First Post" content="This is the content of my first post!"
-
-# Like Post
-http POST http://api.example.com/posts/30/like \
-  Authorization:"Bearer TOKEN"
-
-# Create Comment
-http POST http://api.example.com/posts/30/comments \
-  Authorization:"Bearer TOKEN" \
-  content="Great post! Thanks for sharing."
-```
-
----
-
-## Data Schema
-
-### User Object
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| id | integer | Auto-generated | Unique identifier |
-| email | string | Yes | User email (unique) |
-| name | string | Yes | User name |
-| createdAt | string (ISO 8601) | Auto-generated | Creation timestamp |
-
-### Post Object
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| id | integer | Auto-generated | Unique identifier |
-| title | string | Yes | Post title |
-| content | string | Yes | Post content |
-| userId | integer | Auto-generated | Author ID |
-| likes | integer | Auto | Like count |
-| dislikes | integer | Auto | Dislike count |
-| createdAt | string (ISO 8601) | Auto-generated | Creation timestamp |
-| updatedAt | string (ISO 8601) | Auto-generated | Update timestamp |
-
-### Comment Object
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| id | integer | Auto-generated | Unique identifier |
-| content | string | Yes | Comment text |
-| postId | integer | Auto-generated | Post ID |
-| userId | integer | Auto-generated | Commenter ID |
-| likes | integer | Auto | Like count |
-| dislikes | integer | Auto | Dislike count |
-| createdAt | string (ISO 8601) | Auto-generated | Creation timestamp |
-| updatedAt | string (ISO 8601) | Auto-generated | Update timestamp |
-
----
-
-## Authentication
-
-All protected endpoints require authentication using a JWT token in the Authorization header:
-
-```
-Authorization: Bearer <your_jwt_token>
-```
-
-The token is obtained from the Login endpoint and typically expires after a set time period.
+**Notes:**
+- Requires valid JWT token
+- Supported reactions: like, dislike, love, laugh
+- Users cannot react to their own comments → 400 Bad Request
