@@ -1,8 +1,5 @@
-# Notes API Documentation
- 
-## Overview
-This document contains API requests for a Notes application with authentication. These requests are designed to manage user accounts and personal notes including registration, login, creating, retrieving, updating, and deleting notes. Each example includes the HTTP method, URL, headers, request body, expected HTTP status codes, and notes for testing in Postman.
- 
+# 📄 Notes API Testing
+
 ## Table of Contents
 1. [Register](#1-register)
 2. [Login](#2-login)
@@ -11,29 +8,32 @@ This document contains API requests for a Notes application with authentication.
 5. [Get All Notes](#5-get-all-notes)
 6. [Edit Note](#6-edit-note)
 7. [Delete Note](#7-delete-note)
- 
+
+## Overview
+This document contains API requests for a Notes application with authentication. These requests are designed to manage user accounts and personal notes including registration, login, creating, retrieving, updating, and deleting notes. Each example includes method, URL, headers, request body, expected HTTP status, and response structure.
+
 ---
- 
+
 ## 1. Register
- 
+
 **Method:** POST  
-**URL:** `{{base_url}}/auth/register`
- 
+**URL:** https://api.example.com/auth/register
+
 **Headers:**
 - Content-Type: application/json
- 
-**Request Body:**
+- Accept: application/json
+
+**Body:**
 ```json
 {
   "email": "kenny123@gmail.com",
   "password": "password123"
 }
 ```
- 
+
 **Expected Response:**
- 
-**HTTP Status:** 201 Created  
-**Body:**
+**Expected HTTP Status:** 201 Created
+
 ```json
 {
   "message": "User registered successfully",
@@ -43,35 +43,34 @@ This document contains API requests for a Notes application with authentication.
   }
 }
 ```
- 
+
 **Notes:**
 - Creates a new user account
-- Email must be unique -> 409 Conflict if email already exists
-- Password should meet minimum requirements (e.g., 8+ characters)
-- If email or password is missing -> 400 Bad Request
- 
+- Email must be unique → 409 Conflict if email already exists
+- Password should meet minimum requirements
+
 ---
- 
+
 ## 2. Login
- 
+
 **Method:** POST  
-**URL:** `{{base_url}}/auth/login`
- 
+**URL:** https://api.example.com/auth/login
+
 **Headers:**
 - Content-Type: application/json
- 
-**Request Body:**
+- Accept: application/json
+
+**Body:**
 ```json
 {
   "email": "Grimm21@gmail.com",
   "password": "password123"
 }
 ```
- 
+
 **Expected Response:**
- 
-**HTTP Status:** 200 OK  
-**Body:**
+**Expected HTTP Status:** 200 OK
+
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkdyaW1tMjFAZ21haWwuY29tIiwic3ViIjoyNywiaWF0IjoxNzY4NjUzMzIwLCJleHAiOjE3Njg2NTY5MjB9.EyTAdMhFcfl1dRzysbYu2G9-vC1WfBM8BkIaxEB4kiw",
@@ -81,36 +80,35 @@ This document contains API requests for a Notes application with authentication.
   }
 }
 ```
- 
+
 **Notes:**
 - Returns a JWT token for authentication
 - Token should be used in Authorization header for protected routes
-- If credentials are invalid -> 401 Unauthorized
-- Save the token for subsequent authenticated requests
- 
+- If credentials are invalid → 401 Unauthorized
+
 ---
- 
+
 ## 3. Create Note
- 
+
 **Method:** POST  
-**URL:** `{{base_url}}/notes`
- 
+**URL:** https://api.example.com/notes
+
 **Headers:**
 - Authorization: Bearer <valid_token>
 - Content-Type: application/json
- 
-**Request Body:**
+- Accept: application/json
+
+**Body:**
 ```json
 {
   "title": "Meeting Notes",
   "content": "Discussed project timeline and assigned tasks."
 }
 ```
- 
+
 **Expected Response:**
- 
-**HTTP Status:** 201 Created  
-**Body:**
+**Expected HTTP Status:** 201 Created
+
 ```json
 {
   "id": 65,
@@ -120,29 +118,26 @@ This document contains API requests for a Notes application with authentication.
   "createdAt": "2024-11-02T12:00:00.000Z"
 }
 ```
- 
+
 **Notes:**
 - Requires valid JWT token in Authorization header
-- If token is missing or invalid -> 401 Unauthorized
-- If token is expired -> 401 Unauthorized
+- If token is missing or invalid → 401 Unauthorized
 - Creates a note associated with the authenticated user
- 
+
 ---
- 
+
 ## 4. Get Single Note
- 
+
 **Method:** GET  
-**URL:** `{{base_url}}/notes/{note_id}`
- 
+**URL:** https://api.example.com/notes/65
+
 **Headers:**
 - Authorization: Bearer <valid_token>
- 
-**Request Body:** None
- 
+- Accept: application/json
+
 **Expected Response:**
- 
-**HTTP Status:** 200 OK  
-**Body:**
+**Expected HTTP Status:** 200 OK
+
 ```json
 {
   "id": 65,
@@ -152,29 +147,35 @@ This document contains API requests for a Notes application with authentication.
   "createdAt": "2024-11-02T12:00:00.000Z"
 }
 ```
- 
+
+**Error Response if not found:**
+**Expected HTTP Status:** 404 Not Found
+
+```json
+{
+  "error": "Note not found"
+}
+```
+
 **Notes:**
 - Requires valid JWT token in Authorization header
-- If token is missing or invalid -> 401 Unauthorized
-- If note ID does not exist -> 404 Not Found
-- Users can only access their own notes (403 Forbidden if accessing other user's note)
- 
+- If note ID does not exist → 404 Not Found
+- Users can only access their own notes → 403 Forbidden otherwise
+
 ---
- 
+
 ## 5. Get All Notes
- 
+
 **Method:** GET  
-**URL:** `{{base_url}}/notes`
- 
+**URL:** https://api.example.com/notes
+
 **Headers:**
 - Authorization: Bearer <valid_token>
- 
-**Request Body:** None
- 
+- Accept: application/json
+
 **Expected Response:**
- 
-**HTTP Status:** 200 OK  
-**Body:**
+**Expected HTTP Status:** 200 OK
+
 ```json
 [
   {
@@ -193,36 +194,35 @@ This document contains API requests for a Notes application with authentication.
   }
 ]
 ```
- 
+
 **Notes:**
 - Requires valid JWT token in Authorization header
-- If token is missing or invalid -> 401 Unauthorized
 - Returns only notes belonging to the authenticated user
 - If no notes exist, returns an empty array []
- 
+
 ---
- 
+
 ## 6. Edit Note
- 
+
 **Method:** PATCH  
-**URL:** `{{base_url}}/notes/{note_id}`
- 
+**URL:** https://api.example.com/notes/65
+
 **Headers:**
 - Authorization: Bearer <valid_token>
 - Content-Type: application/json
- 
-**Request Body:**
+- Accept: application/json
+
+**Body:**
 ```json
 {
   "title": "New Meeting Notes",
   "content": "New Discussed project timeline and assigned tasks."
 }
 ```
- 
+
 **Expected Response:**
- 
-**HTTP Status:** 200 OK  
-**Body:**
+**Expected HTTP Status:** 200 OK
+
 ```json
 {
   "id": 65,
@@ -233,71 +233,28 @@ This document contains API requests for a Notes application with authentication.
   "updatedAt": "2024-11-02T12:30:00.000Z"
 }
 ```
- 
+
 **Notes:**
 - Requires valid JWT token in Authorization header
-- If token is missing or invalid -> 401 Unauthorized
-- If note ID does not exist -> 404 Not Found
-- Users can only edit their own notes (403 Forbidden if editing other user's note)
-- Only updates fields provided in the request body
- 
+- Only updates the fields provided in the request body
+- If note ID does not exist → 404 Not Found
+- Users can only edit their own notes → 403 Forbidden otherwise
+
 ---
- 
+
 ## 7. Delete Note
- 
+
 **Method:** DELETE  
-**URL:** `{{base_url}}/notes/{note_id}`
- 
+**URL:** https://api.example.com/notes/80
+
 **Headers:**
 - Authorization: Bearer <valid_token>
- 
-**Request Body:** None
- 
+
 **Expected Response:**
- 
-**HTTP Status:** 204 No Content  
-**Body:** Empty (indicating successful deletion)
- 
+- HTTP Status: 204 No Content
+- Body: Empty (indicating successful deletion)
+
 **Notes:**
 - Requires valid JWT token in Authorization header
-- If token is missing or invalid -> 401 Unauthorized
-- If note ID does not exist -> 404 Not Found
-- Users can only delete their own notes (403 Forbidden if deleting other user's note)
-- Successful deletion returns 204 with no body
- 
----
- 
-## Common Status Codes
- 
-| Status Code | Description |
-|-------------|-------------|
-| 200 OK | Request succeeded (GET, PATCH) |
-| 201 Created | Resource successfully created (POST) |
-| 204 No Content | Successful deletion (DELETE) |
-| 400 Bad Request | Invalid request data or format |
-| 401 Unauthorized | Missing or invalid authentication token |
-| 403 Forbidden | User does not have permission to access resource |
-| 404 Not Found | Resource not found |
-| 409 Conflict | Resource already exists (e.g., duplicate email) |
-| 500 Internal Server Error | Server error occurred |
- 
-## Authentication
- 
-All note-related endpoints require authentication using a JWT token in the Authorization header:
- 
-```
-Authorization: Bearer <your_jwt_token>
-```
- 
-The token is obtained from the Login endpoint and typically expires after a set time period.
- 
-## Testing in Postman
- 
-1. Import the Postman collection: `Notes.postman_collection.json`
-2. Set the `base_url` variable in Postman environment or collection variables
-3. First, register a new user using the Register endpoint
-4. Login to obtain the JWT token
-5. Copy the token and set it in the Authorization header for note endpoints
-6. Run requests in order: Register → Login → Create Note → Get All Notes → Get Single Note → Edit Note → Delete Note
-7. Verify response status codes match expected values
-8. Test authentication by sending requests without the token (should return 401)
+- If note ID does not exist → 404 Not Found
+- Users can only delete their own notes → 403 Forbidden otherwise
