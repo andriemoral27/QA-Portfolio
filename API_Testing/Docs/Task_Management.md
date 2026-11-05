@@ -631,7 +631,7 @@ This document contains API requests for a Task Management application. These req
 
 ## Testing in Postman
 
-1. Import the Postman collection: `Act-7 Task Management.postman_collection.json`
+1. Import the Postman collection: `Task Management.postman_collection.json`
 2. Set the `base_url` variable in Postman environment or collection variables
 3. Create users first (tasks may require user IDs)
 4. Create projects (tasks require project IDs)
