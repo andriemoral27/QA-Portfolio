@@ -429,7 +429,7 @@ This document contains API requests for a Movie Review application. These reques
 
 ## Testing in Postman
 
-1. Import the Postman collection: `Act-6 Movie Review.postman_collection.json`
+1. Import the Postman collection: `Movie Review.postman_collection.json`
 2. Set the `base2_url` variable in Postman environment or collection variables
 3. Create movies first (reviews require movie IDs)
 4. Test GET endpoints to retrieve movie data
