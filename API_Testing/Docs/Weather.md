@@ -1,14 +1,16 @@
-# 📄 Weather API
+# 📄 Weather API 
 
 ## Table of Contents
-1. [Get Weather by City](#1-get-weather-by-city)
+1. [Get Weather by City (London)](#1-get-weather-by-city-london)
+2. [Get Weather by City (New York)](#2-get-weather-by-city-new-york)
+3. [Get Weather by City (Tokyo)](#3-get-weather-by-city-tokyo)
 
 ## Overview
 This document contains API requests for a Weather application. These requests are designed to retrieve weather data for specific cities. Each example includes method, URL, headers, expected HTTP status, and response structure.
 
 ---
 
-## 1. Get Weather by City
+## 1. Get Weather by City (London)
 
 **Method:** GET  
 **URL:** https://api.example.com/weather?city=London
