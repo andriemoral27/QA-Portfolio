@@ -603,7 +603,7 @@ This document contains API requests for a Bookshelf application. These requests 
 
 ## Testing in Postman
 
-1. Import the Postman collection: `Act-3 Bookshelf.postman_collection.json`
+1. Import the Postman collection: `Bookshelf.postman_collection.json`
 2. Set the `base_url` variable in Postman environment or collection variables
 3. Create categories first (books require category IDs)
 4. Create authors (books require author IDs)
