@@ -119,7 +119,7 @@ This document contains API requests for a Weather application. These requests ar
  
 ## Testing in Postman
  
-1. Import the Postman collection: `Act-4 Weather.postman_collection.json`
+1. Import the Postman collection: `Weather.postman_collection.json`
 2. Set the `base_url` variable in Postman environment or collection variables
 3. Test with different city names: London, New York, Tokyo
 4. Verify response status codes match expected values
