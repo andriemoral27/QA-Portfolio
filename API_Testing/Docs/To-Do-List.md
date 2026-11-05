@@ -192,7 +192,7 @@ This document contains API requests for a To-Do List application. These requests
  
 ## Testing in Postman
  
-1. Import the Postman collection: `Act-1 To-Do List.postman_collection.json`
+1. Import the Postman collection: `To-Do List.postman_collection.json`
 2. Set the `base_url` variable in Postman environment or collection variables
 3. Run requests in order: Create → Get All → Get One → Edit → Delete
 4. Verify response status codes match expected values
