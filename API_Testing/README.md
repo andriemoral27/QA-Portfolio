@@ -8,7 +8,6 @@ This repository contains sample process of API Testing on variety of endpoints u
 ## Tools Used
 This is the tool that I used to test API Endpoints 
 - Postman
-- Swagger
 ---
 
 ## HTTP Methods 
