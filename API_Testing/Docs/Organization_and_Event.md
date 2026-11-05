@@ -1,156 +1,94 @@
-# Organization and Event API Documentation
-
-## Overview
-This document contains API requests for an Organization and Event Management application with role-based authentication. These requests are designed to manage users, organizations, events, and event registrations. The system includes user and admin roles, with admins having special permissions to approve/reject organizations. Each example includes the HTTP method, URL, headers, request body, expected HTTP status codes, and notes for testing in Postman.
+# 📄 Organization and Event API Testing
 
 ## Table of Contents
-1. [Authentication](#authentication)
-   - 1.1 Register User
-   - 1.2 Register Admin
-   - 1.3 User Login
-   - 1.4 Admin Login
-2. [Users](#users)
-   - 2.1 Get All Users
-3. [Organizations](#organizations)
-   - 3.1 Create Organization
-   - 3.2 Get All Organizations
-   - 3.3 Get Pending Organizations
-   - 3.4 Approve Organization (Admin Only)
-   - 3.5 Reject Organization (Admin Only)
-   - 3.6 Update Organization (Admin Only)
-   - 3.7 Delete Organization (Admin Only)
-4. [Events](#events)
-   - 4.1 Create Event
-   - 4.2 Get All Events
-   - 4.3 Update Event
-   - 4.4 Delete Event
-   - 4.5 Join Event
-   - 4.6 Leave Event
-5. [Tickets](#tickets)
-   - 5.1 Get All Tickets from User
+1. [Register User](#1-register-user)
+2. [Login User](#2-login-user)
+3. [Get All Organizations](#3-get-all-organizations)
+4. [Get Pending Organizations](#4-get-pending-organizations)
+5. [Create Organization](#5-create-organization)
+6. [Approve Organization](#6-approve-organization)
+7. [Reject Organization](#7-reject-organization)
+8. [Edit Organization](#8-edit-organization)
+9. [Delete Organization](#9-delete-organization)
+10. [Create Event](#10-create-event)
+11. [Get All Events](#11-get-all-events)
+12. [Get Event by ID](#12-get-event-by-id)
+13. [Edit Event](#13-edit-event)
+14. [Delete Event](#14-delete-event)
+15. [Join Event](#15-join-event)
+16. [Leave Event](#16-leave-event)
+17. [Get Event Tickets](#17-get-event-tickets)
+
+## Overview
+This document contains API requests for an Organization and Event management application. These requests are designed to manage user accounts, organizations with approval workflows, events, and event participation. The application includes role-based access control with admin-only operations. Each example includes method, URL, headers, request body, expected HTTP status, and response structure.
 
 ---
 
-## Authentication
-
-### 1.1 Register User
+## 1. Register User
 
 **Method:** POST  
-**URL:** `{{base3_url}}/users/register`
+**URL:** https://api.example.com/users
 
 **Headers:**
 - Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "email": "grimm@gmail.com",
-  "password": "UserPass123!",
-  "first_name": "John",
-  "last_name": "Doe",
-  "gender": "male",
-  "dob": "1990-01-15",
-  "role": "user"
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "password123"
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 201 Created
 
-**HTTP Status:** 201 Created  
-**Body:**
 ```json
 {
-  "message": "User registered successfully",
-  "user": {
-    "id": 5,
-    "email": "grimm@gmail.com",
-    "first_name": "John",
-    "last_name": "Doe",
-    "role": "user"
-  }
+  "id": 1,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "role": "user",
+  "createdAt": "2024-11-02T12:00:00.000Z"
 }
 ```
 
 **Notes:**
-- Creates a new user account with "user" role
-- Email must be unique -> 409 Conflict if email already exists
-- Password should meet minimum requirements
-- Role can be "user" or "admin"
-- If required fields are missing -> 400 Bad Request
+- Creates a new user account
+- Email must be unique → 409 Conflict if already exists
+- Default role is "user"
 
 ---
 
-### 1.2 Register Admin
+## 2. Login User
 
 **Method:** POST  
-**URL:** `{{base3_url}}/users/register`
+**URL:** https://api.example.com/users/login
 
 **Headers:**
 - Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "email": "chloe@gmail.com",
-  "password": "UserPass123!",
-  "first_name": "John",
-  "last_name": "Doe",
-  "gender": "male",
-  "dob": "1990-01-15",
-  "role": "user"
+  "email": "john@example.com",
+  "password": "password123"
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 201 Created  
-**Body:**
 ```json
 {
-  "message": "User registered successfully",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "user": {
-    "id": 4,
-    "email": "chloe@gmail.com",
-    "first_name": "John",
-    "last_name": "Doe",
-    "role": "user"
-  }
-}
-```
-
-**Notes:**
-- Creates a new user account (role may be set to admin later or via separate endpoint)
-- Email must be unique -> 409 Conflict if email already exists
-- In some implementations, admin registration may require special privileges
-
----
-
-### 1.3 User Login
-
-**Method:** POST  
-**URL:** `{{base3_url}}/users/login`
-
-**Headers:**
-- Content-Type: application/json
-
-**Request Body:**
-```json
-{
-  "email": "chloe@gmail.com",
-  "password": "UserPass123!"
-}
-```
-
-**Expected Response:**
-
-**HTTP Status:** 200 OK  
-**Body:**
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNobG9lQGdtYWlsLmNvbSIsInVpZCI6NCwicm9sZSI6InVzZXIiLCJpYXQiOjE3Njg4MTkwNTksImV4cCI6MTc2OTQyMzg1OX0.7D39sDk17fvVIdBM5ExXXZ-ClCUUGtzjatRWjycXKIo",
-  "user": {
-    "id": 4,
-    "email": "chloe@gmail.com",
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com",
     "role": "user"
   }
 }
@@ -159,711 +97,529 @@ This document contains API requests for an Organization and Event Management app
 **Notes:**
 - Returns a JWT token for authentication
 - Token should be used in Authorization header for protected routes
-- If credentials are invalid -> 401 Unauthorized
-- Token includes user role for authorization checks
+- If credentials are invalid → 401 Unauthorized
 
 ---
 
-### 1.4 Admin Login
-
-**Method:** POST  
-**URL:** `{{base3_url}}/users/login`
-
-**Headers:**
-- Content-Type: application/json
-
-**Request Body:**
-```json
-{
-  "email": "adminchloe@gmail.com",
-  "password": "AdminPass123!"
-}
-```
-
-**Expected Response:**
-
-**HTTP Status:** 200 OK  
-**Body:**
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluY2hsb2VAZ21haWwuY29tIiwidWlkIjo0LCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3Njg4MTkwNTksImV4cCI6MTc2OTQyMzg1OX0.7D39sDk17fvVIdBM5ExXXZ-ClCUUGtzjatRWjycXKIo",
-  "user": {
-    "id": 4,
-    "email": "adminchloe@gmail.com",
-    "role": "admin"
-  }
-}
-```
-
-**Notes:**
-- Returns a JWT token with admin role
-- Admin token grants access to admin-only endpoints
-- If credentials are invalid -> 401 Unauthorized
-
----
-
-## Users
-
-### 2.1 Get All Users
+## 3. Get All Organizations
 
 **Method:** GET  
-**URL:** `{{base3_url}}/users`
+**URL:** https://api.example.com/organizations
 
 **Headers:**
-- Authorization: Bearer <valid_token>
-
-**Request Body:** None
+- Accept: application/json
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 [
   {
     "id": 5,
-    "email": "akira@gmail.com",
-    "first_name": "Akira",
-    "last_name": "Tanaka",
-    "role": "user",
+    "name": "Tech Community",
+    "description": "A community for tech enthusiasts",
+    "status": "approved",
     "createdAt": "2024-11-02T12:00:00.000Z"
   },
   {
-    "id": 4,
-    "email": "adminchloe@gmail.com",
-    "first_name": "Chloe",
-    "last_name": "Admin",
-    "role": "admin",
-    "createdAt": "2024-11-02T11:50:00.000Z"
-  }
-]
-```
-
-**Notes:**
-- Requires valid JWT token in Authorization header
-- If token is missing or invalid -> 401 Unauthorized
-- Returns an array of all registered users
-- May require admin role to access all users
-
----
-
-## Organizations
-
-### 3.1 Create Organization
-
-**Method:** POST  
-**URL:** `{{base3_url}}/organizations`
-
-**Headers:**
-- Authorization: Bearer <valid_token>
-- Content-Type: application/json
-
-**Request Body:**
-```json
-{
-  "name": "Tech Community Manila",
-  "description": "A community for tech enthusiasts in Manila",
-  "website": "https://techcommunity.com",
-  "email": "contact@techcommunity.com",
-  "phone": "+63123456789",
-  "address": "Manila, Philippines"
-}
-```
-
-**Expected Response:**
-
-**HTTP Status:** 201 Created  
-**Body:**
-```json
-{
-  "id": 11,
-  "name": "Tech Community Manila",
-  "description": "A community for tech enthusiasts in Manila",
-  "website": "https://techcommunity.com",
-  "email": "contact@techcommunity.com",
-  "phone": "+63123456789",
-  "address": "Manila, Philippines",
-  "status": "pending",
-  "createdAt": "2024-11-02T12:10:00.000Z"
-}
-```
-
-**Notes:**
-- Requires valid JWT token in Authorization header
-- Creates organization with "pending" status by default
-- Name is required field
-- Organization must be approved by admin before it can create events
-- If required fields are missing -> 400 Bad Request
-
----
-
-### 3.2 Get All Organizations
-
-**Method:** GET  
-**URL:** `{{base3_url}}/organizations`
-
-**Headers:**
-- Authorization: Bearer <valid_token>
-
-**Request Body:** None
-
-**Expected Response:**
-
-**HTTP Status:** 200 OK  
-**Body:**
-```json
-[
-  {
-    "id": 9,
-    "name": "Tech Community Manila",
-    "description": "A community for tech enthusiasts in Manila",
-    "website": "https://techcommunity.com",
-    "email": "contact@techcommunity.com",
-    "phone": "+63123456789",
-    "address": "Manila, Philippines",
+    "id": 6,
+    "name": "Sports Club",
+    "description": "Local sports activities",
     "status": "approved",
-    "createdAt": "2024-11-02T12:10:00.000Z"
+    "createdAt": "2024-11-02T12:05:00.000Z"
   }
 ]
 ```
 
 **Notes:**
-- Requires valid JWT token in Authorization header
-- Returns all organizations (both approved and pending)
-- May return only approved organizations for regular users (implementation dependent)
+- Returns only approved organizations
+- Pending organizations are not visible to regular users
+- Supports pagination with `page` and `limit` parameters
 
 ---
 
-### 3.3 Get Pending Organizations
+## 4. Get Pending Organizations
 
 **Method:** GET  
-**URL:** `{{base3_url}}/organizations/pending`
+**URL:** https://api.example.com/organizations/pending
 
 **Headers:**
-- Authorization: Bearer <admin_token>
-
-**Request Body:** None
+- Authorization: Bearer <valid_token>
+- Accept: application/json
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 [
   {
     "id": 11,
-    "name": "Tech Community Manila",
-    "description": "A community for tech enthusiasts in Manila",
-    "website": "https://techcommunity.com",
-    "email": "contact@techcommunity.com",
-    "phone": "+63123456789",
-    "address": "Manila, Philippines",
+    "name": "Art Society",
+    "description": "Art and culture events",
     "status": "pending",
-    "createdAt": "2024-11-02T12:10:00.000Z"
+    "createdAt": "2024-11-02T12:00:00.000Z"
   }
 ]
 ```
 
 **Notes:**
-- Requires valid admin JWT token in Authorization header
-- If user is not admin -> 403 Forbidden
-- Returns only organizations with "pending" status
+- Admin-only endpoint → 403 Forbidden for non-admin users
+- Returns organizations with "pending" status
 - If no pending organizations, returns an empty array []
 
 ---
 
-### 3.4 Approve Organization (Admin Only)
+## 5. Create Organization
 
-**Method:** PATCH  
-**URL:** `{{base3_url}}/organizations/{organization_id}/approve`
+**Method:** POST  
+**URL:** https://api.example.com/organizations
 
 **Headers:**
-- Authorization: Bearer <admin_token>
+- Authorization: Bearer <valid_token>
+- Content-Type: application/json
+- Accept: application/json
 
-**Request Body:** None
+**Body:**
+```json
+{
+  "name": "Music Club",
+  "description": "Music lovers gathering for concerts and jam sessions"
+}
+```
 
 **Expected Response:**
+**Expected HTTP Status:** 201 Created
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 {
   "id": 11,
-  "name": "Tech Community Manila",
-  "description": "A community for tech enthusiasts in Manila",
-  "website": "https://techcommunity.com",
-  "email": "contact@techcommunity.com",
-  "phone": "+63123456789",
-  "address": "Manila, Philippines",
-  "status": "approved",
-  "createdAt": "2024-11-02T12:10:00.000Z",
-  "updatedAt": "2024-11-02T12:30:00.000Z"
+  "name": "Music Club",
+  "description": "Music lovers gathering for concerts and jam sessions",
+  "status": "pending",
+  "creatorId": 1,
+  "createdAt": "2024-11-02T12:00:00.000Z"
 }
 ```
 
 **Notes:**
-- Requires valid admin JWT token in Authorization header
-- If user is not admin -> 403 Forbidden
+- Requires valid JWT token
+- New organizations start with "pending" status
+- Must be approved by admin before becoming visible
+- If name is missing → 400 Bad Request
+
+---
+
+## 6. Approve Organization
+
+**Method:** PATCH  
+**URL:** https://api.example.com/organizations/11/approve
+
+**Headers:**
+- Authorization: Bearer <valid_token>
+
+**Expected Response:**
+**Expected HTTP Status:** 200 OK
+
+```json
+{
+  "message": "Organization approved successfully",
+  "organization": {
+    "id": 11,
+    "name": "Music Club",
+    "description": "Music lovers gathering for concerts and jam sessions",
+    "status": "approved",
+    "createdAt": "2024-11-02T12:00:00.000Z",
+    "updatedAt": "2024-11-02T12:30:00.000Z"
+  }
+}
+```
+
+**Notes:**
+- Admin-only endpoint → 403 Forbidden for non-admin users
 - Changes organization status from "pending" to "approved"
-- If organization ID does not exist -> 404 Not Found
-- Only pending organizations can be approved
+- If organization ID does not exist → 404 Not Found
+- If organization is already approved → 400 Bad Request
 
 ---
 
-### 3.5 Reject Organization (Admin Only)
+## 7. Reject Organization
 
 **Method:** PATCH  
-**URL:** `{{base3_url}}/organizations/{organization_id}/reject`
+**URL:** https://api.example.com/organizations/6/reject
 
 **Headers:**
-- Authorization: Bearer <admin_token>
-
-**Request Body:** None
+- Authorization: Bearer <valid_token>
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 {
-  "id": 6,
-  "name": "Rejected Organization",
-  "description": "This organization was rejected",
-  "website": "https://rejected.com",
-  "email": "contact@rejected.com",
-  "phone": "+63987654321",
-  "address": "Rejected City",
-  "status": "rejected",
-  "createdAt": "2024-11-02T12:10:00.000Z",
-  "updatedAt": "2024-11-02T12:30:00.000Z"
+  "message": "Organization rejected successfully",
+  "organization": {
+    "id": 6,
+    "name": "Sports Club",
+    "description": "Local sports activities",
+    "status": "rejected",
+    "createdAt": "2024-11-02T12:05:00.000Z",
+    "updatedAt": "2024-11-02T12:30:00.000Z"
+  }
 }
 ```
 
 **Notes:**
-- Requires valid admin JWT token in Authorization header
-- If user is not admin -> 403 Forbidden
-- Changes organization status from "pending" to "rejected"
-- If organization ID does not exist -> 404 Not Found
-- Only pending organizations can be rejected
+- Admin-only endpoint → 403 Forbidden for non-admin users
+- Changes organization status to "rejected"
+- Rejected organizations are not visible to users
+- If organization ID does not exist → 404 Not Found
 
 ---
 
-### 3.6 Update Organization (Admin Only)
+## 8. Edit Organization
 
 **Method:** PATCH  
-**URL:** `{{base3_url}}/organizations/{organization_id}`
+**URL:** https://api.example.com/organizations/5
 
 **Headers:**
-- Authorization: Bearer <admin_token>
+- Authorization: Bearer <valid_token>
 - Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "name": "Updated Tech Community Manila",
-  "description": "Updated description",
-  "website": "https://newtechcommunity.com",
-  "email": "new@techcommunity.com"
+  "description": "Updated description for Tech Community"
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 {
   "id": 5,
-  "name": "Updated Tech Community Manila",
-  "description": "Updated description",
-  "website": "https://newtechcommunity.com",
-  "email": "new@techcommunity.com",
-  "phone": "+63123456789",
-  "address": "Manila, Philippines",
+  "name": "Tech Community",
+  "description": "Updated description for Tech Community",
   "status": "approved",
-  "createdAt": "2024-11-02T12:10:00.000Z",
+  "createdAt": "2024-11-02T12:00:00.000Z",
   "updatedAt": "2024-11-02T12:30:00.000Z"
 }
 ```
 
 **Notes:**
-- Requires valid admin JWT token in Authorization header
-- If user is not admin -> 403 Forbidden
+- Only the organization creator or admin can edit → 403 Forbidden otherwise
 - Only updates the fields provided in the request body
-- If organization ID does not exist -> 404 Not Found
+- If organization ID does not exist → 404 Not Found
 
 ---
 
-### 3.7 Delete Organization (Admin Only)
+## 9. Delete Organization
 
 **Method:** DELETE  
-**URL:** `{{base3_url}}/organizations/{organization_id}`
+**URL:** https://api.example.com/organizations/6
 
 **Headers:**
-- Authorization: Bearer <admin_token>
-
-**Request Body:** None
+- Authorization: Bearer <valid_token>
 
 **Expected Response:**
-
-**HTTP Status:** 204 No Content  
-**Body:** Empty (indicating successful deletion)
+- HTTP Status: 204 No Content
+- Body: Empty (indicating successful deletion)
 
 **Notes:**
-- Requires valid admin JWT token in Authorization header
-- If user is not admin -> 403 Forbidden
-- If organization ID does not exist -> 404 Not Found
-- If organization has associated events, may return 400 Bad Request or cascade delete (implementation dependent)
-- Successful deletion returns 204 with no body
+- Admin-only endpoint → 403 Forbidden for non-admin users
+- Cascade delete: associated events should also be deleted
+- If organization has active events → 400 Bad Request or 409 Conflict
 
 ---
 
-## Events
-
-### 4.1 Create Event
+## 10. Create Event
 
 **Method:** POST  
-**URL:** `{{base3_url}}/events`
+**URL:** https://api.example.com/events
 
 **Headers:**
 - Authorization: Bearer <valid_token>
 - Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "organizationId": 9,
-  "title": "Novel Conference 2026",
-  "description": "Annual technology conference featuring the latest innovations",
-  "eventDate": "2026-02-15",
-  "startTime": "09:00",
-  "endTime": "17:00",
-  "location": "Manila Convention Center",
-  "maxAttendees": 100,
-  "registrationDeadline": "2026-02-10"
+  "title": "Tech Conference 2024",
+  "description": "Annual technology conference with workshops and networking",
+  "date": "2024-12-15",
+  "time": "09:00",
+  "location": "Convention Center",
+  "maxAttendees": 500,
+  "organizationId": 5
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 201 Created
 
-**HTTP Status:** 201 Created  
-**Body:**
 ```json
 {
   "id": 9,
-  "organizationId": 9,
-  "title": "Novel Conference 2026",
-  "description": "Annual technology conference featuring the latest innovations",
-  "eventDate": "2026-02-15",
-  "startTime": "09:00",
-  "endTime": "17:00",
-  "location": "Manila Convention Center",
-  "maxAttendees": 100,
-  "registrationDeadline": "2026-02-10",
+  "title": "Tech Conference 2024",
+  "description": "Annual technology conference with workshops and networking",
+  "date": "2024-12-15",
+  "time": "09:00",
+  "location": "Convention Center",
+  "maxAttendees": 500,
   "currentAttendees": 0,
-  "createdAt": "2024-11-02T12:20:00.000Z"
+  "organizationId": 5,
+  "createdAt": "2024-11-02T12:00:00.000Z"
 }
 ```
 
 **Notes:**
-- Requires valid JWT token in Authorization header
-- organizationId must reference an approved organization
-- If organization is not approved -> 403 Forbidden
-- If organizationId does not exist -> 400 Bad Request
-- Date and time fields should be in valid formats
+- Requires valid JWT token
+- organizationId must reference an approved organization → 400 Bad Request if not found
+- date should be in ISO 8601 format (YYYY-MM-DD)
+- time should be in 24-hour format (HH:MM)
+- If title, date, or location is missing → 400 Bad Request
 
 ---
 
-### 4.2 Get All Events
+## 11. Get All Events
 
 **Method:** GET  
-**URL:** `{{base3_url}}/events`
+**URL:** https://api.example.com/events
 
 **Headers:**
-- Authorization: Bearer <valid_token>
-
-**Request Body:** None
+- Accept: application/json
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 [
   {
     "id": 9,
-    "organizationId": 9,
-    "title": "Novel Conference 2026",
-    "description": "Annual technology conference featuring the latest innovations",
-    "eventDate": "2026-02-15",
-    "startTime": "09:00",
-    "endTime": "17:00",
-    "location": "Manila Convention Center",
-    "maxAttendees": 100,
-    "registrationDeadline": "2026-02-10",
-    "currentAttendees": 5,
-    "createdAt": "2024-11-02T12:20:00.000Z"
+    "title": "Tech Conference 2024",
+    "description": "Annual technology conference with workshops and networking",
+    "date": "2024-12-15",
+    "time": "09:00",
+    "location": "Convention Center",
+    "maxAttendees": 500,
+    "currentAttendees": 25,
+    "organizationId": 5,
+    "createdAt": "2024-11-02T12:00:00.000Z"
+  },
+  {
+    "id": 7,
+    "title": "Workshop: Web Development",
+    "description": "Learn modern web development techniques",
+    "date": "2024-11-20",
+    "time": "14:00",
+    "location": "Tech Hub",
+    "maxAttendees": 50,
+    "currentAttendees": 30,
+    "organizationId": 5,
+    "createdAt": "2024-11-02T12:05:00.000Z"
   }
 ]
 ```
 
 **Notes:**
-- Requires valid JWT token in Authorization header
-- Returns an array of all events
-- If no events exist, returns an empty array []
-- Events may be sorted by event date
+- Returns all events from approved organizations
+- Supports pagination with `page` and `limit` parameters
+- Can filter by organizationId with query parameter
+- Can filter by date range with query parameters
 
 ---
 
-### 4.3 Update Event
+## 12. Get Event by ID
+
+**Method:** GET  
+**URL:** https://api.example.com/events/9
+
+**Headers:**
+- Accept: application/json
+
+**Expected Response:**
+**Expected HTTP Status:** 200 OK
+
+```json
+{
+  "id": 9,
+  "title": "Tech Conference 2024",
+  "description": "Annual technology conference with workshops and networking",
+  "date": "2024-12-15",
+  "time": "09:00",
+  "location": "Convention Center",
+  "maxAttendees": 500,
+  "currentAttendees": 25,
+  "organizationId": 5,
+  "createdAt": "2024-11-02T12:00:00.000Z"
+}
+```
+
+**Error Response if not found:**
+**Expected HTTP Status:** 404 Not Found
+
+```json
+{
+  "error": "Event not found"
+}
+```
+
+---
+
+## 13. Edit Event
 
 **Method:** PATCH  
-**URL:** `{{base3_url}}/events/{event_id}`
+**URL:** https://api.example.com/events/9
 
 **Headers:**
 - Authorization: Bearer <valid_token>
 - Content-Type: application/json
+- Accept: application/json
 
-**Request Body:**
+**Body:**
 ```json
 {
-  "title": "Updated Tech Conference 2026",
-  "maxAttendees": 150,
-  "description": "Updated conference description"
+  "maxAttendees": 600,
+  "location": "Grand Convention Center"
 }
 ```
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 {
   "id": 9,
-  "organizationId": 9,
-  "title": "Updated Tech Conference 2026",
-  "description": "Updated conference description",
-  "eventDate": "2026-02-15",
-  "startTime": "09:00",
-  "endTime": "17:00",
-  "location": "Manila Convention Center",
-  "maxAttendees": 150,
-  "registrationDeadline": "2026-02-10",
-  "currentAttendees": 5,
-  "createdAt": "2024-11-02T12:20:00.000Z",
+  "title": "Tech Conference 2024",
+  "description": "Annual technology conference with workshops and networking",
+  "date": "2024-12-15",
+  "time": "09:00",
+  "location": "Grand Convention Center",
+  "maxAttendees": 600,
+  "currentAttendees": 25,
+  "organizationId": 5,
+  "createdAt": "2024-11-02T12:00:00.000Z",
   "updatedAt": "2024-11-02T12:30:00.000Z"
 }
 ```
 
 **Notes:**
-- Requires valid JWT token in Authorization header
+- Only event creator or organization admin can edit → 403 Forbidden otherwise
 - Only updates the fields provided in the request body
-- If event ID does not exist -> 404 Not Found
-- User must be from the event's organization (implementation dependent)
+- If event ID does not exist → 404 Not Found
+- Cannot reduce maxAttendees below currentAttendees → 400 Bad Request
 
 ---
 
-### 4.4 Delete Event
+## 14. Delete Event
 
 **Method:** DELETE  
-**URL:** `{{base3_url}}/events/{event_id}`
+**URL:** https://api.example.com/events/7
 
 **Headers:**
 - Authorization: Bearer <valid_token>
 
-**Request Body:** None
-
 **Expected Response:**
-
-**HTTP Status:** 204 No Content  
-**Body:** Empty (indicating successful deletion)
+- HTTP Status: 204 No Content
+- Body: Empty (indicating successful deletion)
 
 **Notes:**
-- Requires valid JWT token in Authorization header
-- If event ID does not exist -> 404 Not Found
-- User must be from the event's organization or admin (implementation dependent)
-- If event has attendees, may return 400 Bad Request or cascade delete (implementation dependent)
-- Successful deletion returns 204 with no body
+- Only event creator or organization admin can delete → 403 Forbidden otherwise
+- If event has attendees, they should be notified
+- If event ID does not exist → 404 Not Found
 
 ---
 
-### 4.5 Join Event
+## 15. Join Event
 
 **Method:** POST  
-**URL:** `{{base3_url}}/events/{event_id}/join`
+**URL:** https://api.example.com/events/9/join
 
 **Headers:**
 - Authorization: Bearer <valid_token>
-- Content-Type: application/json
-
-**Request Body:**
-```json
-{
-  "userId": 6
-}
-```
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 {
-  "message": "Successfully joined event",
-  "ticket": {
-    "id": 1,
-    "eventId": 9,
-    "userId": 6,
-    "status": "confirmed",
-    "createdAt": "2024-11-02T12:25:00.000Z"
-  }
+  "message": "Successfully joined the event",
+  "eventId": 9,
+  "attendeeCount": 26
 }
 ```
 
 **Notes:**
-- Requires valid JWT token in Authorization header
-- Creates a ticket/registration for the user
-- User must not already be registered for the event
-- If event is full (maxAttendees reached) -> 400 Bad Request
-- If registration deadline has passed -> 400 Bad Request
-- If event ID does not exist -> 404 Not Found
+- Requires valid JWT token
+- Users cannot join the same event twice → 400 Bad Request
+- If event is full (currentAttendees >= maxAttendees) → 400 Bad Request
+- Creates a ticket for the user
 
 ---
 
-### 4.6 Leave Event
+## 16. Leave Event
 
 **Method:** POST  
-**URL:** `{{base3_url}}/events/{event_id}/leave`
+**URL:** https://api.example.com/events/9/leave
 
 **Headers:**
 - Authorization: Bearer <valid_token>
-- Content-Type: application/json
-
-**Request Body:**
-```json
-{
-  "userId": 5
-}
-```
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 {
-  "message": "Successfully left event"
+  "message": "Successfully left the event",
+  "eventId": 9,
+  "attendeeCount": 25
 }
 ```
 
 **Notes:**
-- Requires valid JWT token in Authorization header
-- Removes the user's ticket/registration for the event
-- User must be registered for the event
-- If user is not registered -> 400 Bad Request
-- If event ID does not exist -> 404 Not Found
+- Requires valid JWT token
+- Users can only leave events they have joined → 400 Bad Request
+- Decrements currentAttendees count
+- Invalidates the user's ticket
 
 ---
 
-## Tickets
-
-### 5.1 Get All Tickets from User
+## 17. Get Event Tickets
 
 **Method:** GET  
-**URL:** `{{base3_url}}/events/tickets/{user_id}`
+**URL:** https://api.example.com/events/tickets/7
 
 **Headers:**
 - Authorization: Bearer <valid_token>
-
-**Request Body:** None
+- Accept: application/json
 
 **Expected Response:**
+**Expected HTTP Status:** 200 OK
 
-**HTTP Status:** 200 OK  
-**Body:**
 ```json
 [
   {
     "id": 1,
-    "eventId": 9,
-    "userId": 7,
-    "status": "confirmed",
-    "event": {
-      "id": 9,
-      "title": "Novel Conference 2026",
-      "eventDate": "2026-02-15",
-      "location": "Manila Convention Center"
-    },
-    "createdAt": "2024-11-02T12:25:00.000Z"
+    "eventId": 7,
+    "userId": 1,
+    "userName": "John Doe",
+    "status": "active",
+    "issuedAt": "2024-11-02T12:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "eventId": 7,
+    "userId": 2,
+    "userName": "Jane Smith",
+    "status": "active",
+    "issuedAt": "2024-11-02T12:05:00.000Z"
   }
 ]
 ```
 
 **Notes:**
-- Requires valid JWT token in Authorization header
-- Returns all tickets/registrations for a specific user
-- If user has no tickets, returns an empty array []
-- May include event details in the response
-- Users can typically only view their own tickets (403 Forbidden otherwise)
-
----
-
-## Common Status Codes
-
-| Status Code | Description |
-|-------------|-------------|
-| 200 OK | Request succeeded (GET, POST for join/leave, PATCH) |
-| 201 Created | Resource successfully created (POST) |
-| 204 No Content | Successful deletion (DELETE) |
-| 400 Bad Request | Invalid request data or format |
-| 401 Unauthorized | Missing or invalid authentication token |
-| 403 Forbidden | User does not have permission (e.g., non-admin accessing admin endpoints) |
-| 404 Not Found | Resource not found |
-| 409 Conflict | Resource already exists (e.g., duplicate email) |
-| 500 Internal Server Error | Server error occurred |
-
-## Authentication
-
-All protected endpoints require authentication using a JWT token in the Authorization header:
-
-```
-Authorization: Bearer <your_jwt_token>
-```
-
-The token is obtained from the Login endpoint and includes the user's role for authorization checks.
-
-## Role-Based Access Control
-
-- **User Role**: Can register organizations, create events (if organization is approved), join/leave events, view their own tickets
-- **Admin Role**: Can access all user endpoints, approve/reject organizations, update/delete organizations, view all organizations including pending ones
-
-## Testing in Postman
-
-1. Import the Postman collection: `Organization and event.postman_collection.json`
-2. Set the `base3_url` variable in Postman environment or collection variables
-3. Register a user and an admin using the Register endpoints
-4. Login as both user and admin to obtain their respective JWT tokens
-5. Copy the tokens and set them in the Authorization header for protected endpoints
-6. Test user workflow:
-   - User creates an organization (status should be "pending")
-   - Try to create an event with pending organization (should fail with 403)
-7. Test admin workflow:
-   - Admin views pending organizations
-   - Admin approves the organization
-   - Admin can also reject organizations
-8. Test event creation:
-   - User (from approved organization) creates an event
-   - View all events
-9. Test event registration:
-   - Different users join the event
-   - Users leave the event
-   - View user tickets
-10. Test authorization:
-    - Try to access admin endpoints with user token (should return 403)
-    - Try to access other users' tickets (should return 403)
-11. Verify response status codes match expected values
-12. Test error scenarios:
-    - Create event with non-existent organizationId (should return 400)
-    - Join event that is full (should return 400)
-    - Join event after registration deadline (should return 400)
-    - Approve/reject non-existent organization (should return 404)
+- Admin or event creator only → 403 Forbidden otherwise
+- Returns all tickets for a specific event
+- If event has no attendees, returns an empty array []
+- Ticket status can be: active, cancelled, used
