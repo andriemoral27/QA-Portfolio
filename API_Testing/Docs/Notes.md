@@ -1,4 +1,4 @@
-# 📄 Notes API Testing
+# 📄 Notes API
 
 ## Table of Contents
 1. [Register](#1-register)
